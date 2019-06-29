@@ -111,11 +111,11 @@
 
       <address>
         <postal>
-          <street/>
+          <street>170 W. Tasman Drive</street>
 
-          <city/>
+          <city>San Jose, CA</city>
 
-          <country/>
+          <country>United States</country>
         </postal>
 
         <email>eckelcu@cisco.com</email>
@@ -127,50 +127,57 @@
     <workgroup>Operations and Management Area Working Group</workgroup>
 
     <abstract>
-      <t>This document provides a YANG data model for SD-WAN service. An
-      SD-WAN service is a service offered by a Service Provider network to
-      provide an private overlay connectivity between different locations of a
-      customer network or between a customer network and an external network,
-      such as Internet or Private/Public Cloud network. The model can be
-      utilized by an service orchestrator of a Service Provider to initiate a
-      connectivity request.</t>
+      <t>This document provides a YANG data model for an SD-WAN service. An
+      SD-WAN service is a connectivity service offered by a service provider
+      network to provide connectivity across different locations of a customer
+      network or between a customer network and an external network, such as
+      the Internet or a private/public cloud network. This connectivity is
+      provided as an overlay constructed using one of more underlay networks.
+      The model can be used by a service orchestrator of a service provider to
+      request, configure, and manage the components of an SD-WAN service.</t>
     </abstract>
   </front>
 
   <middle>
     <section anchor="intro" title="Introduction">
-      <t>By comparison with conventional PE-based VPN service defined in <xref
-      target="RFC8299">Layer 3 VPN Service Model</xref> and <xref
-      target="RFC8466">Layer 2 VPN Service Model</xref>, SD-WAN service is a
-      type of CE-based VPN which uses the Internet or a PE based VPN as
-      underlay connectivity service. More specially, SD-WAN uses an overlay
-      approach to provide the flexibility of adding, removing, or moving
-      services without dependence of the underlay network.</t>
+      <t>An SD-WAN service is a connectivity service offered by a service
+      provider network to provide connectivity across different locations of a
+      customer network or between a customer network and an external network.
+      Compared to a conventional PE-based connectivity service as defined in
+      <xref target="RFC8299">Layer 3 VPN Service Model</xref> and <xref
+      target="RFC8466">Layer 2 VPN Service Model</xref>, an SD-WAN service is
+      a CE-based connectivity service that uses the Internet or PE-based
+      connectivity services as underlay connectivity services. More specially,
+      an SD-WAN service is an overlay connectively service that provides the
+      flexibility of adding, removing, or moving services without needing to
+      change the underlay networks.</t>
 
       <t>Besides being an overlay service, an SD-WAN Service has the following
       characteristics:</t>
 
       <t><list style="symbols">
-          <t>Hybrid WAN accesses: The CE could connect to a variety of
-          Internet access, including fiber, cable, DSL-based, WiFi, or 4G/Long
-          Term Evolution (LTE) access, which implies wider reachability and
+          <t>Hybrid WAN access: The CE could connect to a variety of Internet
+          access technologies, including fiber, cable, DSL-based, WiFi, or
+          4G/Long Term Evolution (LTE), which implies wider reachability and
           shorter provisioning cycles. It can also use private VPN
-          connectivity defined in [RFC4364] or [RFC4664] to take advantage of
-          better performance.</t>
+          connectivity services defined in [RFC4364] and [RFC4664], or
+          Operator Ethernet Services, as defined in <xref target="MEF51.1"/>,
+          to take advantage of better performance.</t>
 
           <t>Application based traffic forwarding: There are diverse
           applications used in enterprises, such as VoIP calling, video
-          conferencing, streaming media etc. Application traffic across the
+          conferencing, streaming media, etc. Application traffic across the
           WAN will be forwarded based on business priorities, SLA
           requirements, or other enterprise requirements.</t>
 
-          <t>Centralized service management: Service users need to be provided
-          with a single point (such as a web portal) to dynamically add or
-          modify services, such as configuring application policies, adding
-          new sites, or adding new VPN services.</t>
+          <t>Centralized service management: Subscribers of the service need
+          to be provided a single point (such as a web portal) from which to
+          dynamically add or modify services, such as configuring application
+          policies, adding new sites, or adding new underlay connectivity
+          services.</t>
         </list></t>
 
-      <t>This draft specifies the SD-WAN service YANG model which is modeled
+      <t>This draft specifies the SD-WAN service YANG model which is modelled
       from a customer perspective. The model parameters can be used as an
       input to automated control and configuration applications to manage
       SD-WAN services.</t>
@@ -200,33 +207,35 @@
         networking (SDN) into an application that businesses can use to
         quickly create a hybrid WAN, which comprises business-grade IP VPN,
         broadband Internet, and wireless services or multiple WANs of the same
-        type. SD-WAN is also deemed as extended CE-based VPN.</t>
+        or different types. SD-WAN is also deemed as extended CE-based
+        VPN.</t>
 
         <t>SD-WAN Controller: Refers to the abstract entity that combines
-        Control Plane(CP) and Management Plane (MP) defined in <xref
-        target="RFC7426"> SDN: Layers and Architecture Terminology</xref>,
-        Which configure, manage and control the CEs and other corresponding
-        SD-WAN components.</t>
+        Control Plane (CP) and Management Plane (MP) defined in <xref
+        target="RFC7426"> SDN: Layers and Architecture Terminology</xref>, to
+        configure, manage and control the CEs and other corresponding SD-WAN
+        components.</t>
 
-        <t>Underlay network: The network that provides the connectivity among
-        SD-WAN VPN sites and that the customer network packets are tunneled
-        over. The underlay network does not need to be aware that it is
-        carrying overlay customer network packets. Addresses on the underlay
-        network appear as "outer addresses" in encapsulated overlay packets.
-        In general, the underlay network can use a completely different
-        protocol (and address family) from that of the overlay network.</t>
+        <t>Underlay network: A network that provides connectivity across
+        SD-WAN sites and over which customer network packets are tunnelled. An
+        underlay network does not need to be aware that it is carrying overlay
+        customer network packets. Addresses on an underlay network appear as
+        "outer addresses" in encapsulated overlay packets. In general, an
+        underlay network can use a completely different protocol (and address
+        family) from that of the overlay network.</t>
 
         <t>Overlay network: A virtual network in which the separation of
         customer networks is hidden from the underlying physical
-        infrastructure. That is, the underlying transport network does not
-        need to know about customer separation to correctly forward traffic.
-        IPsec tunnels [RFC6071] is an example of an L3 overlay network.</t>
+        infrastructure. That is, the underlying transport networks do not need
+        to know about customer separation to correctly forward traffic. IPsec
+        tunnels [RFC6071] are an example of an L3 overlay network.</t>
       </section>
     </section>
 
     <section title="High Level Overview of SD-WAN Service">
-      <t>From a customer perspective, an example of SD-WAN network is shown in
-      figure 1.<figure align="center" title="figure 1 SD-WAN network example">
+      <t>From a customer perspective, an example of SD-WAN service network is
+      shown in figure 1.<figure align="center"
+          title="figure 1 SD-WAN network example">
           <artwork>                         +-------------+
     +------------+       |    +---+    |
     | Controller +----+  |    |CN |    |   Legend:Customer Network
@@ -268,31 +277,30 @@
       sites, which are connected through Internet or MPLS VPN.</t>
 
       <t>Within each site, a CE is connected with customer's network on one
-      side, and is also connected to Internet or private WAN or both on the
-      other side. The customer networks could be L2 or L3 network. For the WAN
-      side, Internet provides ubiquitous IP connectivity via access network
-      like Broadband access or LTE access, while MPLS WAN, like conventional
-      VPN, provides secure and committed connectivity while attached. The
-      boundary between the customer and the SP is between customer node and
-      the CE device.</t>
+      side, and is also connected to Internet, or to private WAN, or to both
+      on the other side. The customer network could be an L2 or L3 network.
+      For the WAN side, Internet provides ubiquitous IP connectivity via
+      access network like Broadband access or LTE access, while MPLS WAN, like
+      conventional VPN, provides secure and committed connectivity. The
+      boundary between the customer and the service provider is between
+      customer node and the CE device.</t>
 
       <t>Additionally, a site could deploy one or more CEs to improve
       availability.</t>
 
-      <t>The Controller is a centralized entity that manage and control all
-      the CEs involved in the SD-WAN. The controller could provide
-      bootstrapping of CE, CE configuration, and establish the secured tunnel
-      between the CE to support the SD-WAN connectivity service and the
-      follow-on application policy enforcement. The various IP tunneling
-      options (e.g., <xref target="RFC2784">Generic Routing Encapsulation
-      (GRE)</xref>and <xref target="RFC6071">IPSec</xref>could be used
-      depending on whether the traffic from the site is across underlying
-      private VPN or public Internet, and the specific definition is out of
-      scope of this document.</t>
+      <t>The controller is a centralized entity that manages all the CEs
+      involved in the SD-WAN. The controller could provide bootstrapping of
+      the CEs, ongoing CE configuration, and establishment of secured tunnels
+      between CEs to support the SD-WAN service and application policy
+      enforcement. Various IP tunnelling options (e.g., <xref
+      target="RFC2784">GRE</xref> and <xref target="RFC6071">IPSec</xref>),
+      could be used depending on whether traffic from the site is across
+      underlying private VPN or public Internet, and the specific definition
+      is out of scope of this document.</t>
 
       <t>Besides basic connectivity between the sites, the SD-WAN service
       could be extended by providing direct Internet connectivity, cloud
-      network connectivity or conventional MPLS VPN interoperability.</t>
+      network connectivity, or conventional MPLS VPN interoperability.</t>
     </section>
 
     <section title="Service Data Model Usage">
@@ -356,7 +364,7 @@
     <section title="Design of the Data Model">
       <!-- overview -->
 
-      <t>SD-WAN Service consist of two types of service components: <list
+      <t>An SD-WAN service consist of two service components: <list
           style="numbers">
           <t>SD-WAN connectivity service</t>
 
@@ -367,18 +375,18 @@
 
       <section title="SD-WAN connectivity service">
         <t>SD-WAN connectivity service is the basic component of the SD-WAN
-        service which represents a virtual connection between two or more
+        service that represents a virtual connection between two or more
         customer sites. In this model, each virtual connection is defined as a
         VPN. Each customer can have one or more VPNs, and each VPN can be
-        established between a subset of sites, and the association of sites
-        and VPNs is modeled by VPN endpoints.</t>
+        established between a subset of sites. The association of sites and
+        VPNs is modelled by VPN endpoints.</t>
 
         <section title="VPNs">
           <t>The "sdwan-vpn" list item contains service parameters that apply
-          to an SD-WAN VPN, which is further specified by the following
-          ones:<list style="symbols">
-              <t>The "vpn-id" leaf is under the vpn-service list, which refers
-              to an internal reference for this VPN service.</t>
+          to an SD-WAN VPN. These parameters are specified as follows:<list
+              style="symbols">
+              <t>The "vpn-id" leaf is under the vpn-service list, and
+              providers a unique ID for a VPN.</t>
 
               <t>The "endpoints" list is under the vpn-service list. Each
               "endpoint" is a logical point associated with a site. The two
@@ -388,22 +396,22 @@
               <t>The "topology" leaf is under the vpn-service list, which
               refers to a specific topology of the VPN service. Different VPN
               connection topology can be used. For a VPN with a few sites,
-              simple topologies such as a hub-and-spoke or a full mesh can be
+              simple topologies such as hub-and-spoke or full-mesh can be
               used. For a large VPN, a hierarchical topology may be taken.</t>
 
-              <t>The "performance-objectives" container refers the
+              <t>The "performance-objectives" container specifies the
               performance-related properties of an SD-WAN VPN that can be
-              measured. System uptime is the only one performance objective
-              currently, which indicates the proportion of time, during a
-              given time period, that the service is working from the customer
+              measured. System uptime is the only performance objective
+              defined currently. It indicates the proportion of time, during a
+              given time period that the service is working from the customer
               perspective. Three parameters are defined, including the start
               time of the evaluation, the time interval of the evaluation, and
-              the service uptime defined by the percentage.</t>
+              the service uptime defined by a percentage.</t>
 
-              <t>The "reserved-prefixes" container refers to the IP Prefixes
-              need to be agreed for Service Provider management purposes, such
-              as diagnostics so as to ensure they are not overlapping with IP
-              Prefixes used by the customer network.</t>
+              <t>The "reserved-prefixes" container specifies the IP Prefixes
+              that need to be reserved for Service Provider management
+              purposes, such as diagnostics, so as to ensure they are not
+              overlapping with IP Prefixes used by the customer network.</t>
             </list></t>
 
           <t><figure align="center" title="figure 3 SD-WAN VPN example">
@@ -439,23 +447,22 @@
 
               <t>"lan-accesses": Specifies the customer network access link
               parameters. A "site" is composed of at least one "lan-access"
-              and,where one or more subnets can reside.The "lan-access"
-              consists of the following categories of parameters:<list
-                  style="symbols">
+              where one or more subnets can reside.The "lan-access" consists
+              of the following categories of parameters:<list style="symbols">
                   <t>"bearer": defines requirements of the attachment (below
-                  Layer 3), bearer type including Ethernet and etc..</t>
+                  Layer 3), bearer type including Ethernet, etc.</t>
 
                   <t>IP Connection: defines Layer 3 parameters of the
-                  attachment, including IPv4 connection parameters and IPv4
-                  connection parameters respectively.</t>
+                  attachment, including IPv4 connection parameters and IPv6
+                  connection parameters.</t>
                 </list></t>
 
               <t>"wan-accesses": Specifies the WAN access link parameters. A
               "site" is composed of at least one "wan-access". The WAN access
-              can be further specified by: access type, service provider name,
-              and bandiwith of WAN connectivity. . The "wan-access" consists
+              can be further specified by access type, service provider name,
+              and bandwidth of the WAN connectivity. The "wan-access" consists
               of the following categories of parameters:<list style="symbols">
-                  <t>"acess-type":specifies whether the access is Broadband
+                  <t>"access-type":specifies whether the access is Broadband
                   Internet, Wireless Internet or private circuit.</t>
 
                   <t>"access-provider": specifies the service provider
@@ -465,11 +472,11 @@
                   input and output bandwidth.</t>
 
                   <t>"bearer": defines requirements of the attachment (below
-                  Layer 3), bearer type including Ethernet and etc..</t>
+                  Layer 3), bearer type including Ethernet, etc.</t>
 
                   <t>IP Connection: defines Layer 3 parameters of the
-                  attachment, including IPv4 connection parameters and IPv4
-                  connection parameters respectively.</t>
+                  attachment, including IPv4 connection parameters and IPv6
+                  connection parameters.</t>
                 </list></t>
             </list></t>
 
@@ -499,9 +506,10 @@
 
       <section title="Application based Policy Service ">
         <t>The connectivity service establishes a virtual connection for the
-        enterprise network, and the Application Policy Service is designed to
-        ensure business-critical and real-time application experience while
-        ensuring the security and corporate policies.</t>
+        enterprise network, and the Application based Policy Service is
+        designed to ensure business-critical and real-time application
+        experience while also ensuring the security and corporate
+        policies.</t>
 
         <t>Typically, application policies common to each VPN can be defined
         and then enforced when traffic from a customer's network at a
@@ -510,36 +518,36 @@
         <t>The application policy assignment is defined under the VPN endpoint
         container to specify the mapping of application flow name or
         application group name and their associated policy list names. If an
-        Application Flow and the Application Flow Group in which the
-        Application Flow is a member are both assigned a Policy at an VPN End
-        Point, the Policy assigned to the Application Flow will supersedes the
+        application flow and the application flow group in which the
+        Application Flow is a member are both assigned a policy at an VPN End
+        Point, the policy assigned to the application flow will supersedes the
         group policy.</t>
 
         <t>The application policy per VPN consist of three lists under the VPN
         container:<list style="symbols">
-            <t>Application Flow List: Describes the characteristics of an
+            <t>application flow list: Describes the characteristics of an
             enterprise application and is used to identify applications, e.g.,
-            based on Layer 3 source and destination addresses, Layer 4 ports,
-            and Layer 4 protocol etc.</t>
+            based on layer 3 source and destination addresses, layer 4 ports,
+            layer 4 protocol, etc.</t>
 
-            <t>Application group list: Describes application flow aggregation,
+            <t>application group list: Describes application flow aggregation,
             which is used to deliver aggregation policies, such as bandwidth
             restrictions for a group of applications.</t>
 
-            <t>Policy list: Defines the application's policy set. Since SD-WAN
+            <t>policy list: Defines the application's policy set. Since SD-WAN
             has more than one WAN connectivity and various encrypted or
-            unencrypted overlay tunnel, there could be multiple tunnel or link
-            selection combination. In this model, different path selection
-            policy are combined to meet different needs based on application
-            SLA, security, cost, and so on. For example, when different
-            applications in a branch need to pass over the WAN, according to
-            the application-aware policy requirements and the IP forwarding
-            table, the Internet application or the SaaS application can be
-            accessed through the Internet, and the data center FTP application
-            can use the Internet encrypted tunnel as the primary path, and the
-            tunnel could only be over broadband Internet instead of wireless
-            internet. This policy combination is not an exhaustive list and
-            could be augmented according to business needs.</t>
+            unencrypted overlay tunnels, there could be multiple tunnel or
+            link selection combination. In this model, different path
+            selection policies are combined to meet different needs based on
+            application SLA, security, cost, and so on. For example, when
+            different applications in a branch need to pass over the WAN,
+            according to the application-aware policy requirements and the IP
+            forwarding table, the Internet application or the SaaS application
+            can be accessed through the Internet, and the data center FTP
+            application can use the Internet encrypted tunnel as the primary
+            path, and the tunnel could only be over broadband Internet instead
+            of wireless internet. This policy combination is not an exhaustive
+            list and could be augmented according to business needs.</t>
           </list></t>
 
         <t>An example of a classification of application flows is as
@@ -603,7 +611,7 @@ will be classified in app-id 2.
     </section>
 
     <section title=" Modules Tree Structure">
-      <t>This document defines SD-WAN service YANG data model.</t>
+      <t>This document defines an SD-WAN service YANG data model.</t>
 
       <figure>
         <artwork>module: ietf-sdwan-svc
@@ -2067,7 +2075,7 @@ will be classified in app-id 2.
       is Secure Shell (SSH) [RFC6242]. The lowest RESTCONF layer is HTTPS, and
       the mandatory-to-implement secure transport is TLS [RFC5246].</t>
 
-      <t>The NETCONF access control model [RFC6536]provides the means to
+      <t>The NETCONF access control model [RFC6536] provides the means to
       restrict access for particular NETCONF or RESTCONF users to a
       preconfigured subset of all available NETCONF or RESTCONF protocol
       operations and content.</t>
@@ -2086,7 +2094,7 @@ will be classified in app-id 2.
       [RFC3688].</t>
 
       <figure>
-        <artwork>             URI: urn:ietf:params:xml:ns:yang:ietf-sdwan-vpn-svc
+        <artwork>             URI: urn:ietf:params:xml:ns:yang:ietf-sdwan-svc
              Registrant Contact: The IESG
              XML: N/A; the requested URI is an XML namespace.</artwork>
       </figure>
@@ -2095,24 +2103,25 @@ will be classified in app-id 2.
       registry [RFC6020] as follows:</t>
 
       <figure>
-        <artwork>           Name: ietf-sdwan-vpn-svc
-           Namespace: urn:ietf:params:xml:ns:yang:ietf-sdwan-vpn-svc
+        <artwork>           Name: ietf-sdwan-svc
+           Namespace: urn:ietf:params:xml:ns:yang:ietf-sdwan-svc
            Prefix: sdwan-svc
            Reference: RFC xxxx</artwork>
       </figure>
     </section>
 
     <section title="Appendix 1: Terminology Mapping between MEF SD-WAN Service Attributes and IETF SD-WAN model ">
-      <t><xref target="MEF70">MEF 70 R1</xref> defines the SD-WAN Service
-      Attributes and Services for SD-WAN service delivery, that can be used
-      for communication between Subscribers and SPs to deliver SD-WAN services
-      while this draft define YANG data model for SD-WAN Service delivery
-      communicated between customer and service provider. The purpose of both
-      work is very similar.</t>
+      <t> SD-WAN Service Attributes and Services <xref
+      target="MEF70-Draft-R1"/>, defines the SD-WAN service attributes and
+      services for SD-WAN service delivery. These service attributes can be
+      used for communication between subscribers and services to deliver
+      SD-WAN services while this draft defines a YANG data model for SD-WAN
+      service delivery communicated between customer and service provider. The
+      purpose of both work is very similar.</t>
 
       <t>The below table shows the terminology mapping. The YANG model retains
       most parameter definition name but adjusts some of the structure to
-      preserve the space for future augmentation. Such as the model defines
+      reserve space for future augmentation. For example, the model defines
       "vpn-service" and "lan-access" as a list, which can accommodate the case
       where the current MEF service attribute restricts only one VPN per
       customer and one LAN access and future extension to multiple VPN or LAN
@@ -2135,11 +2144,11 @@ will be classified in app-id 2.
 
     <section title="Appendix 2: IETF OSE model vs IETF SD-WAN model">
       <t><xref target="I-D.wood-rtgwg-sdwan-ose-yang">SD-WAN OSE service
-      delivery model </xref> defines two SD-WAN OSE Open SD-WAN Exchange(OSE)
+      delivery model </xref> defines two SD-WAN OSE Open SD-WAN Exchange (OSE)
       service YANG modules to enable the orchestrator in the enterprise
       network to implement SD-WAN inter-domain reachability and connectivity
       services and application aware traffic steering services. Although the
-      ose yang model is also a service model, instead of being a device model,
+      OSE YANG model is also a service model instead of being a device model,
       this model is mainly used for interoperability between multiple SD-WAN
       domains and service consistency. The differences are shown as
       follows:</t>
@@ -2162,8 +2171,8 @@ will be classified in app-id 2.
 
       <t>For the SLA based dynamic path selection policy, the OSE service
       model uses a similar application classification criteria, but at the
-      same time it will collect the relevant status of the traffic SLA profile
-      and, based on the measurements calculated from the collected
+      same time it will collect the relevant status of the traffic SLA
+      profiles and, based on the measurements calculated from the collected
       information, the primary or secondary path will be selected.</t>
 
       <t><figure>
@@ -2178,12 +2187,12 @@ will be classified in app-id 2.
 
     <section title="Acknowledgments">
       <t>This work has benefited from the discussions of with Jack
-      Pugaczewski,Larry S Samberg,Pascal Menezes from MEF community.</t>
+      Pugaczewski, Larry S Samberg, and Pascal Menezes from MEF community.</t>
     </section>
 
     <section title="Contributors">
       <t>The authors would like to thank Zitao Wang for his major
-      contributions to the initial modeling.</t>
+      contributions to the initial modelling.</t>
     </section>
   </middle>
 
@@ -2236,13 +2245,25 @@ will be classified in app-id 2.
 
       <?rfc include='reference.RFC.2784'?>
 
-      <reference anchor="MEF70">
+      <reference anchor="MEF51.1"
+                 target="https://wiki.mef.net/display/CESG/MEF+51.1+-+OVC+Services">
         <front>
-          <title>SD-WAN Service Attributes and Service</title>
+          <title>Operator Ethernet Service Definition</title>
 
           <author fullname="MEF" role="editor"/>
 
-          <date/>
+          <date month="December" year="2018"/>
+        </front>
+      </reference>
+
+      <reference anchor="MEF70-Draft-R1"
+                 target="https://www.mef.net/Assets/Draft-Standards/MEF_70_Draft_(R1).pdf">
+        <front>
+          <title>SD-WAN Service Attributes and Services</title>
+
+          <author fullname="MEF" role="editor"/>
+
+          <date day="1" month="May" year="2019"/>
         </front>
       </reference>
     </references>
