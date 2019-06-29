@@ -1,0 +1,2254 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is for creating an Internet Draft using xml2rfc,               
+    which is available here: http://xml.resource.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.             
+    There has to be one entity for each item to be referenced.                    
+    An alternate method (rfc include) is described in the references.-->
+<!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2697 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2697.xml">
+<!ENTITY RFC2698 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2698.xml">
+<!ENTITY RFC6020 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6020.xml">
+]>
+<rfc category="std" docName="draft-sun-opsawg-sdwan-service-model-03"
+     ipr="trust200902">
+  <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+  <!-- used by XSLT processors -->
+
+  <!-- For a complete list and description of processing instructions (PIs),        
+    please see http://xml.resource.org/authoring/README.html. -->
+
+  <!-- Below are generally applicable Processing Instructions (PIs) that
+    most I-Ds might want to use.
+    (Here they are set differently than their defaults in xml2rfc
+    v1.32) -->
+
+  <?rfc strict="yes" ?>
+
+  <!-- give errors regarding ID-nits and DTD validation -->
+
+  <!-- control the table of contents (ToC) -->
+
+  <?rfc toc="yes"?>
+
+  <!-- generate a ToC -->
+
+  <?rfc tocdepth="4"?>
+
+  <?rfc compact="yes" ?>
+
+  <front>
+    <title abbrev="SD-WAN Service YANG Model ">A YANG Data Model for SD-WAN
+    Service Delivery</title>
+
+    <author fullname="Qiong Sun" initials="Q." surname="Sun">
+      <organization>China Telecom</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Beijing</city>
+
+          <country>China</country>
+        </postal>
+
+        <email>sunqiong.bri@chinatelecom.cn</email>
+      </address>
+    </author>
+
+    <author fullname="Honglei Xu" initials="H." surname="Xu">
+      <organization>China Telecom</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Beijing</city>
+
+          <country>China</country>
+        </postal>
+
+        <email>sunqiong.bri@chinatelecom.cn</email>
+      </address>
+    </author>
+
+    <author fullname="Bo Wu" initials="B." role="editor" surname="Wu">
+      <organization>Huawei</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Nanjing</city>
+
+          <country>China</country>
+        </postal>
+
+        <email>lana.wubo@huawei.com</email>
+      </address>
+    </author>
+
+    <author fullname="Qin Wu" initials="Q." role="editor" surname="Wu">
+      <organization>Huawei</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city>Nanjing</city>
+
+          <country>China</country>
+        </postal>
+
+        <email>bill.wu@huawei.com</email>
+      </address>
+    </author>
+
+    <author fullname="Charles Eckel " initials="C." surname="Eckel">
+      <organization>Cisco Systems</organization>
+
+      <address>
+        <postal>
+          <street/>
+
+          <city/>
+
+          <country/>
+        </postal>
+
+        <email>eckelcu@cisco.com</email>
+      </address>
+    </author>
+
+    <date year="2019"/>
+
+    <workgroup>Operations and Management Area Working Group</workgroup>
+
+    <abstract>
+      <t>This document provides a YANG data model for SD-WAN service. An
+      SD-WAN service is a service offered by a Service Provider network to
+      provide an private overlay connectivity between different locations of a
+      customer network or between a customer network and an external network,
+      such as Internet or Private/Public Cloud network. The model can be
+      utilized by an service orchestrator of a Service Provider to initiate a
+      connectivity request.</t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="intro" title="Introduction">
+      <t>By comparison with conventional PE-based VPN service defined in <xref
+      target="RFC8299">Layer 3 VPN Service Model</xref> and <xref
+      target="RFC8466">Layer 2 VPN Service Model</xref>, SD-WAN service is a
+      type of CE-based VPN which uses the Internet or a PE based VPN as
+      underlay connectivity service. More specially, SD-WAN uses an overlay
+      approach to provide the flexibility of adding, removing, or moving
+      services without dependence of the underlay network.</t>
+
+      <t>Besides being an overlay service, an SD-WAN Service has the following
+      characteristics:</t>
+
+      <t><list style="symbols">
+          <t>Hybrid WAN accesses: The CE could connect to a variety of
+          Internet access, including fiber, cable, DSL-based, WiFi, or 4G/Long
+          Term Evolution (LTE) access, which implies wider reachability and
+          shorter provisioning cycles. It can also use private VPN
+          connectivity defined in [RFC4364] or [RFC4664] to take advantage of
+          better performance.</t>
+
+          <t>Application based traffic forwarding: There are diverse
+          applications used in enterprises, such as VoIP calling, video
+          conferencing, streaming media etc. Application traffic across the
+          WAN will be forwarded based on business priorities, SLA
+          requirements, or other enterprise requirements.</t>
+
+          <t>Centralized service management: Service users need to be provided
+          with a single point (such as a web portal) to dynamically add or
+          modify services, such as configuring application policies, adding
+          new sites, or adding new VPN services.</t>
+        </list></t>
+
+      <t>This draft specifies the SD-WAN service YANG model which is modeled
+      from a customer perspective. The model parameters can be used as an
+      input to automated control and configuration applications to manage
+      SD-WAN services.</t>
+
+      <section title="Terminology">
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+        "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+        document are to be interpreted as described in <xref
+        target="RFC2119">RFC2119</xref>.</t>
+      </section>
+
+      <section title="Definitions">
+        <t>CE Device: Customer Edge Device , as per <xref
+        target="RFC4026">Provider Provisioned VPN Terminology</xref> .</t>
+
+        <t>CE-based VPN: Refers to <xref target="RFC4026">Provider Provisioned
+        VPN Terminology</xref></t>
+
+        <t>PE Device: Provider Edge Device, as per <xref
+        target="RFC4026">Provider Provisioned VPN Terminology</xref></t>
+
+        <t>PE-Based VPNs: Refers to <xref target="RFC4026">Provider
+        Provisioned VPN Terminology</xref></t>
+
+        <t>SD-WAN: An automated, programmatic approach to managing enterprise
+        network connectivity and circuit usage. It extends software-defined
+        networking (SDN) into an application that businesses can use to
+        quickly create a hybrid WAN, which comprises business-grade IP VPN,
+        broadband Internet, and wireless services or multiple WANs of the same
+        type. SD-WAN is also deemed as extended CE-based VPN.</t>
+
+        <t>SD-WAN Controller: Refers to the abstract entity that combines
+        Control Plane(CP) and Management Plane (MP) defined in <xref
+        target="RFC7426"> SDN: Layers and Architecture Terminology</xref>,
+        Which configure, manage and control the CEs and other corresponding
+        SD-WAN components.</t>
+
+        <t>Underlay network: The network that provides the connectivity among
+        SD-WAN VPN sites and that the customer network packets are tunneled
+        over. The underlay network does not need to be aware that it is
+        carrying overlay customer network packets. Addresses on the underlay
+        network appear as "outer addresses" in encapsulated overlay packets.
+        In general, the underlay network can use a completely different
+        protocol (and address family) from that of the overlay network.</t>
+
+        <t>Overlay network: A virtual network in which the separation of
+        customer networks is hidden from the underlying physical
+        infrastructure. That is, the underlying transport network does not
+        need to know about customer separation to correctly forward traffic.
+        IPsec tunnels [RFC6071] is an example of an L3 overlay network.</t>
+      </section>
+    </section>
+
+    <section title="High Level Overview of SD-WAN Service">
+      <t>From a customer perspective, an example of SD-WAN network is shown in
+      figure 1.<figure align="center" title="figure 1 SD-WAN network example">
+          <artwork>                         +-------------+
+    +------------+       |    +---+    |
+    | Controller +----+  |    |CN |    |   Legend:Customer Network
+    +------------+    |  |    +---+    |
+                      |  |      | site3|
+                      |  |   +--+--+   |
+                      +--|---|CE 4 |   |
+                      |  |   +--+--+   |
+                      |  +-------------+
+                      |         |
+                      +------------------- ----+
+                      |        -----           |
+        +---------------+   /  MPLS   \   +-----------------+
+        |             | |  |   WAN     |__|    |            |
+        |             | |  /\         /\  \ +--+--+         |
+        |             | | /   +-----+   \ |\|CE 1 +-+       |
+        | +---+  +----++|/               \|/+--+--+ |  +---+|
+        | |CN +--+ CE 3||                 \         +--+CN ||
+        | +---+  +-----+|      ------    /|\+--+--+ |  +---+|
+        |             | |\   /Internet\ / |/|CE 2 +-+       |
+        |             | | --|   WAN    |__/ +--+--+         |
+        |       site 2| |    \        /   |  site 1         |
+        +---------------+      ------     +-----------------+
+                      |           |
+                      |    +-------------+
+                      |    |   +----+    |
+                      +----|---+ CE5|    |
+                           |   +----+    |
+                           |site 4|      |
+                           |      |      |
+                           |    +---+    |
+                           |    |CN |    |
+                           |    +---+    |
+                           +-------------+   
+                                                </artwork>
+        </figure></t>
+
+      <t>As shown in figure 1, the SD-WAN network consists of a number of
+      sites, which are connected through Internet or MPLS VPN.</t>
+
+      <t>Within each site, a CE is connected with customer's network on one
+      side, and is also connected to Internet or private WAN or both on the
+      other side. The customer networks could be L2 or L3 network. For the WAN
+      side, Internet provides ubiquitous IP connectivity via access network
+      like Broadband access or LTE access, while MPLS WAN, like conventional
+      VPN, provides secure and committed connectivity while attached. The
+      boundary between the customer and the SP is between customer node and
+      the CE device.</t>
+
+      <t>Additionally, a site could deploy one or more CEs to improve
+      availability.</t>
+
+      <t>The Controller is a centralized entity that manage and control all
+      the CEs involved in the SD-WAN. The controller could provide
+      bootstrapping of CE, CE configuration, and establish the secured tunnel
+      between the CE to support the SD-WAN connectivity service and the
+      follow-on application policy enforcement. The various IP tunneling
+      options (e.g., <xref target="RFC2784">Generic Routing Encapsulation
+      (GRE)</xref>and <xref target="RFC6071">IPSec</xref>could be used
+      depending on whether the traffic from the site is across underlying
+      private VPN or public Internet, and the specific definition is out of
+      scope of this document.</t>
+
+      <t>Besides basic connectivity between the sites, the SD-WAN service
+      could be extended by providing direct Internet connectivity, cloud
+      network connectivity or conventional MPLS VPN interoperability.</t>
+    </section>
+
+    <section title="Service Data Model Usage">
+      <t>The SD-WAN service model provides an abstracted interface to request,
+      configure, and manage the components of an SD-WAN service.</t>
+
+      <t>A typical usage for this model is as an input to a service
+      orchestrator that is responsible for service management. Based on the
+      user's service request, the service orchestrator can instruct the SD-WAN
+      controller to add a new site,VPN or application policy in real-time. The
+      orchestrator could orchestrator the other network, such as legacy MPLS
+      VPN network to interconnect with SD-WAN network where <xref
+      target="RFC8466">Layer 2 VPN Service Mode</xref> or <xref
+      target="RFC8299">Layer 3 VPN Service Model</xref> could be used.</t>
+
+      <t><figure align="center"
+          title="Reference Architecture for the Use of SD-WAN Service Model Usage">
+          <artwork>                      ----------------------------
+                     | Customer Service Requester |
+                      ----------------------------
+                                   |
+                           SD-WAN  |    
+                           Service |    
+                           Model   |    
+                                   |
+                        -------------------------
+                       | Service Orchestrator    |
+                        -----------+---------+---
+                                   |         |
+              ---------------------+-    ----+----
+             |   SD-WAN  Controller  |  |  NMS    |
+              --------*------------*-    ----*----
+                     /              \       /
+                    /                \    /
+                   /                  \ /
+  ----------------/-  -----------------X  ------------------------
+                 /                   /  \
+                /           ---    /     \
+               /          /     \/        \
+         ++++++++        |  MPLS |         \++++++++
+         + CE A +         \  VPN/           + CE B +
+         ++++++++          \---/            ++++++++
+                           /---\
+         Site A           /     \             Site B
+                         |Internet
+                          \     /
+                           \---/
+</artwork>
+        </figure></t>
+
+      <t>For an SD-WAN to be established under the SP's control, the customer
+      informs the Service Provider of which sites should become part of the
+      requested service and what types of policy will provide. And then the SP
+      configures and updates the service base on the service model and the
+      available resources derived from the SD-WAN controller, and then
+      provisions and manages the customer's service through the SD-WAN
+      controller. How the SD-WAN controller to control and manage the CEs is
+      out of scope of the document.</t>
+    </section>
+
+    <section title="Design of the Data Model">
+      <!-- overview -->
+
+      <t>SD-WAN Service consist of two types of service components: <list
+          style="numbers">
+          <t>SD-WAN connectivity service</t>
+
+          <t>SD-WAN application policy service</t>
+        </list></t>
+
+      <!-- next section -->
+
+      <section title="SD-WAN connectivity service">
+        <t>SD-WAN connectivity service is the basic component of the SD-WAN
+        service which represents a virtual connection between two or more
+        customer sites. In this model, each virtual connection is defined as a
+        VPN. Each customer can have one or more VPNs, and each VPN can be
+        established between a subset of sites, and the association of sites
+        and VPNs is modeled by VPN endpoints.</t>
+
+        <section title="VPNs">
+          <t>The "sdwan-vpn" list item contains service parameters that apply
+          to an SD-WAN VPN, which is further specified by the following
+          ones:<list style="symbols">
+              <t>The "vpn-id" leaf is under the vpn-service list, which refers
+              to an internal reference for this VPN service.</t>
+
+              <t>The "endpoints" list is under the vpn-service list. Each
+              "endpoint" is a logical point associated with a site. The two
+              main functions of the endpoint are the association of a VPN with
+              a site and per site application based policy enforcement.</t>
+
+              <t>The "topology" leaf is under the vpn-service list, which
+              refers to a specific topology of the VPN service. Different VPN
+              connection topology can be used. For a VPN with a few sites,
+              simple topologies such as a hub-and-spoke or a full mesh can be
+              used. For a large VPN, a hierarchical topology may be taken.</t>
+
+              <t>The "performance-objectives" container refers the
+              performance-related properties of an SD-WAN VPN that can be
+              measured. System uptime is the only one performance objective
+              currently, which indicates the proportion of time, during a
+              given time period, that the service is working from the customer
+              perspective. Three parameters are defined, including the start
+              time of the evaluation, the time interval of the evaluation, and
+              the service uptime defined by the percentage.</t>
+
+              <t>The "reserved-prefixes" container refers to the IP Prefixes
+              need to be agreed for Service Provider management purposes, such
+              as diagnostics so as to ensure they are not overlapping with IP
+              Prefixes used by the customer network.</t>
+            </list></t>
+
+          <t><figure align="center" title="figure 3 SD-WAN VPN example">
+              <artwork align="center">                                 ------
+                               / MPLS   \
+                              |   VPN    |
+    +----------------+         \        /   +----------------+
+----+    ---         |   VPN1    ------     +      ---       +------
+    |   |EP1+--------+----------------------+-----+EP1|      |
+    |    ---         |                      |      ---       |
+    |    ---         |   VPN2               |      ---       |
+----+   |EP2+--------+----------------------+-----+EP2|      +------
+    |    ---  Site 1 |          ------      |      ---  Site2|
+    +-- -------------+        /        \    +----------------+
+                             | Internet |
+                              \        /
+                                ------
+</artwork>
+            </figure></t>
+        </section>
+
+        <section title="Sites">
+          <t>A site represents a customer office located at a specific
+          geographic location. The "sites" container specifies the following
+          parameters:</t>
+
+          <t><list style="symbols">
+              <t>"site-id: uniquely identifies the site within the overall
+              network infrastructure.</t>
+
+              <t>"device" specifies the device type (physical or virtual
+              device) and the number of the devices.</t>
+
+              <t>"lan-accesses": Specifies the customer network access link
+              parameters. A "site" is composed of at least one "lan-access"
+              and,where one or more subnets can reside.The "lan-access"
+              consists of the following categories of parameters:<list
+                  style="symbols">
+                  <t>"bearer": defines requirements of the attachment (below
+                  Layer 3), bearer type including Ethernet and etc..</t>
+
+                  <t>IP Connection: defines Layer 3 parameters of the
+                  attachment, including IPv4 connection parameters and IPv4
+                  connection parameters respectively.</t>
+                </list></t>
+
+              <t>"wan-accesses": Specifies the WAN access link parameters. A
+              "site" is composed of at least one "wan-access". The WAN access
+              can be further specified by: access type, service provider name,
+              and bandiwith of WAN connectivity. . The "wan-access" consists
+              of the following categories of parameters:<list style="symbols">
+                  <t>"acess-type":specifies whether the access is Broadband
+                  Internet, Wireless Internet or private circuit.</t>
+
+                  <t>"access-provider": specifies the service provider
+                  name.</t>
+
+                  <t>bandwidth: specifies the WAN link bandwidth including
+                  input and output bandwidth.</t>
+
+                  <t>"bearer": defines requirements of the attachment (below
+                  Layer 3), bearer type including Ethernet and etc..</t>
+
+                  <t>IP Connection: defines Layer 3 parameters of the
+                  attachment, including IPv4 connection parameters and IPv4
+                  connection parameters respectively.</t>
+                </list></t>
+            </list></t>
+
+          <t><figure align="center" title="figure 4 Site example">
+              <artwork align="center">+---------------------------------+
+|              site               |
+|    |   |            |     |     |
+|    |   |            |     |     |
+|   LAN1 LAN2         LAN3 LAN4   |
+|  +--------+       +--------+    |
+|  |        |       |        |    |
+|  |Device 1|       |Device 2|    |
+|  +---+----+       +----+---+    |
+|  WAN1|  WAN2     WAN3  | WAN4   |
+|      |    \       /    |        |
++------+-----------------+--------+
+       |      \   /      |
+       |       \ /       |
+     -----      /\     -----
+   /        \  /  \  /        \
+  | MPLS VPN |-    -| Internet |
+   \        /        \        /
+     -----              ----- </artwork>
+            </figure></t>
+        </section>
+      </section>
+
+      <section title="Application based Policy Service ">
+        <t>The connectivity service establishes a virtual connection for the
+        enterprise network, and the Application Policy Service is designed to
+        ensure business-critical and real-time application experience while
+        ensuring the security and corporate policies.</t>
+
+        <t>Typically, application policies common to each VPN can be defined
+        and then enforced when traffic from a customer's network at a
+        particular site is sent over the WAN.</t>
+
+        <t>The application policy assignment is defined under the VPN endpoint
+        container to specify the mapping of application flow name or
+        application group name and their associated policy list names. If an
+        Application Flow and the Application Flow Group in which the
+        Application Flow is a member are both assigned a Policy at an VPN End
+        Point, the Policy assigned to the Application Flow will supersedes the
+        group policy.</t>
+
+        <t>The application policy per VPN consist of three lists under the VPN
+        container:<list style="symbols">
+            <t>Application Flow List: Describes the characteristics of an
+            enterprise application and is used to identify applications, e.g.,
+            based on Layer 3 source and destination addresses, Layer 4 ports,
+            and Layer 4 protocol etc.</t>
+
+            <t>Application group list: Describes application flow aggregation,
+            which is used to deliver aggregation policies, such as bandwidth
+            restrictions for a group of applications.</t>
+
+            <t>Policy list: Defines the application's policy set. Since SD-WAN
+            has more than one WAN connectivity and various encrypted or
+            unencrypted overlay tunnel, there could be multiple tunnel or link
+            selection combination. In this model, different path selection
+            policy are combined to meet different needs based on application
+            SLA, security, cost, and so on. For example, when different
+            applications in a branch need to pass over the WAN, according to
+            the application-aware policy requirements and the IP forwarding
+            table, the Internet application or the SaaS application can be
+            accessed through the Internet, and the data center FTP application
+            can use the Internet encrypted tunnel as the primary path, and the
+            tunnel could only be over broadband Internet instead of wireless
+            internet. This policy combination is not an exhaustive list and
+            could be augmented according to business needs.</t>
+          </list></t>
+
+        <t>An example of a classification of application flows is as
+        follows:</t>
+
+        <figure>
+          <artwork>The HTTP traffic from the 192.0.2.0/24 LAN destined for port 80
+will be classified in app-id 1.
+
+The FTP traffic from the 192.0.2.0/24 LAN destined for 203.0.113.1/32
+will be classified in app-id 2.
+</artwork>
+        </figure>
+
+        <t>An example of a policy list is as follows:</t>
+
+        <figure>
+          <artwork>   "policy": [
+     {
+       "policy-id": "pol-a",
+       "policy-package": 
+            {
+                "encryption": "false",
+                "internet-breakout": "true"
+                "public-private": "public",
+                "billing-method": "flat-only"
+                "backup": "false",
+                "bandwidth": "20","50"
+             }
+      },
+     {
+       "policy-id": "pol-b",
+       "policy-package": 
+         {
+            "encryption": "true",
+            "internet-breakout": "false"
+             "public-private": "public",
+             "billing-method": "flat-only"
+             "backup": "false",
+             "bandwidth": "50","none"
+             }
+     }
+   ]</artwork>
+        </figure>
+
+        <t>An example of an application policy list is as follows:</t>
+
+        <figure>
+          <artwork>   "app-policy": [
+     {
+       "app-id": "1"
+       "policy-id": "pol-a",
+      },
+     {
+        "app-id": "1"
+        "policy-id": "pol-b",
+     }
+   ]</artwork>
+        </figure>
+      </section>
+    </section>
+
+    <section title=" Modules Tree Structure">
+      <t>This document defines SD-WAN service YANG data model.</t>
+
+      <figure>
+        <artwork>module: ietf-sdwan-svc
+  +--rw sdwan-svc
+     +--rw vpn-services
+     |  +--rw vpn-service* [vpn-id]
+     |     +--rw vpn-id                   svc-id
+     |     +--rw topology?                identityref
+     |     +--rw performance-objective
+     |     |  +--rw start-time?         yang:date-and-time
+     |     |  +--rw duration?           string
+     |     |  +--rw uptime-objective
+     |     |     +--rw duration?   decimal64
+     |     +--rw reserved-prefixes
+     |     |  +--rw prefix*   inet:ip-prefix
+     |     +--rw application* [app-id]
+     |     |  +--rw app-id    svc-id
+     |     |  +--rw ac* [name]
+     |     |     +--rw name                       string
+     |     |     +--rw (match-type)?
+     |     |        +--:(match-flow)
+     |     |        |  +--rw match-flow
+     |     |        |     +--rw ethertype?         uint16
+     |     |        |     +--rw cvlan?             uint8
+     |     |        |     +--rw ipv4-src-prefix?   inet:ipv4-prefix
+     |     |        |     +--rw ipv4-dst-prefix?   inet:ipv4-prefix
+     |     |        |     +--rw l4-src-port?       inet:port-number
+     |     |        |     +--rw l4-dst-port?       inet:port-number
+     |     |        |     +--rw ipv6-src-prefix?   inet:ipv6-prefix
+     |     |        |     +--rw ipv6-dst-prefix?   inet:ipv6-prefix
+     |     |        |     +--rw protocol-field?    union
+     |     |        +--:(match-application)
+     |     |           +--rw match-application?   identityref
+     |     +--rw application-group* [app-group-id]
+     |     |  +--rw app-group-id    svc-id
+     |     |  +--rw app-id*         -&gt; ../../application/app-id
+     |     +--rw policy* [policy-id]
+     |     |  +--rw policy-id         svc-id
+     |     |  +--rw policy-package
+     |     |     +--rw encryption?       enumeration
+     |     |     +--rw public-private?   enumeration
+     |     |     +--rw local-breakout?   boolean
+     |     |     +--rw billing-method?   enumeration
+     |     |     +--rw backup-path?      enumeration
+     |     |     +--rw bandwith
+     |     |        +--rw commit?   uint32
+     |     |        +--rw max?      uint32
+     |     +--rw endpoints* [endpoint-id]
+     |        +--rw endpoint-id            svc-id
+     |        +--rw site-role?             identityref
+     |        +--rw site-attachment
+     |        |  +--rw site-id?   -&gt; /sdwan-svc/sites/site/site-id
+     |        +--rw endpoint-policy-map
+     |           +--rw app-group-policy* [app-group-id]
+     |           |  +--rw app-group-id    leafref
+     |           |  +--rw policy-id?      leafref
+     |           +--rw app-policy* [app-id]
+     |              +--rw app-id       leafref
+     |              +--rw policy-id?   leafref
+     +--rw sites
+        +--rw site* [site-id]
+           +--rw site-id       svc-id
+           +--rw device* [name]
+           |  +--rw name    string
+           |  +--rw type?   identityref
+           +--rw lan-access* [name]
+           |  +--rw name             string
+           |  +--rw l2-technology
+           |  |  +--rw l2-type?              identityref
+           |  |  +--rw untagged-interface
+           |  |  |  +--rw speed?   uint32
+           |  |  |  +--rw mode?    neg-mode
+           |  |  +--rw tagged-interface
+           |  |  |  +--rw type?                identityref
+           |  |  |  +--rw dot1q-vlan-tagged
+           |  |  |  |  +--rw tg-type?    identityref
+           |  |  |  |  +--rw cvlan-id    uint16
+           |  |  |  +--rw priority-tagged
+           |  |  |     +--rw tag-type?   identityref
+           |  |  +--rw l2-mtu?               uint32
+           |  +--rw ip-connection
+           |     +--rw ipv4
+           |     |  +--rw address-allocation-type?   identityref
+           |     |  +--rw dhcp
+           |     |  |  +--rw primary-subnet
+           |     |  |  |  +--rw ip-prefix?
+           |     |  |  |  |       inet:ipv4-prefix
+           |     |  |  |  +--rw default-router?       inet:ip-address
+           |     |  |  |  +--rw provider-addresses*
+           |     |  |  |  |       inet:ipv4-address
+           |     |  |  |  +--rw subscriber-address?   inet:ip-address
+           |     |  |  |  +--rw reserved-ip-prefix*   inet:ip-prefix
+           |     |  |  +--rw secondary-subnet* [ip-prefix]
+           |     |  |     +--rw ip-prefix
+           |     |  |     |       inet:ipv4-prefix
+           |     |  |     +--rw provider-addresses*
+           |     |  |     |       inet:ipv4-address
+           |     |  |     +--rw reserved-ip-prefix*
+           |     |  |             inet:ipv4-prefix
+           |     |  +--rw static
+           |     |     +--rw primary-subnet
+           |     |     |  +--rw ip-prefix?
+           |     |     |  |       inet:ipv4-prefix
+           |     |     |  +--rw default-router?       inet:ip-address
+           |     |     |  +--rw provider-addresses*
+           |     |     |  |       inet:ipv4-address
+           |     |     |  +--rw subscriber-address?   inet:ip-address
+           |     |     |  +--rw reserved-ip-prefix*   inet:ip-prefix
+           |     |     +--rw secondary-subnet* [ip-prefix]
+           |     |        +--rw ip-prefix
+           |     |        |       inet:ipv4-prefix
+           |     |        +--rw provider-addresses*
+           |     |        |       inet:ipv4-address
+           |     |        +--rw reserved-ip-prefix*
+           |     |                inet:ipv4-prefix
+           |     +--rw ipv6
+           |        +--rw address-allocation-type?   identityref
+           |        +--rw dhcp
+           |        |  +--rw subnet* [ip-prefix]
+           |        |     +--rw ip-prefix
+           |        |     |       inet:ipv6-prefix
+           |        |     +--rw provider-addresses*
+           |        |     |       inet:ipv6-address
+           |        |     +--rw reserved-ip-prefix*
+           |        |             inet:ipv6-prefix
+           |        +--rw slaac
+           |        |  +--rw subnet* [ip-prefix]
+           |        |     +--rw ip-prefix
+           |        |     |       inet:ipv6-prefix
+           |        |     +--rw provider-addresses*
+           |        |     |       inet:ipv6-address
+           |        |     +--rw reserved-ip-prefix*
+           |        |             inet:ipv6-prefix
+           |        +--rw static
+           |           +--rw subnet* [ip-prefix]
+           |           |  +--rw ip-prefix
+           |           |  |       inet:ipv6-prefix
+           |           |  +--rw provider-addresses*
+           |           |  |       inet:ipv6-address
+           |           |  +--rw reserved-ip-prefix*
+           |           |          inet:ipv6-prefix
+           |           +--rw subscriber-address?   inet:ipv6-address
+           +--rw wan-access* [name]
+              +--rw name               string
+              +--rw access-type?       identityref
+              +--rw access-provider?   string
+              +--rw bandwidth
+              |  +--rw input-bandwidth?    uint64
+              |  +--rw output-bandwidth?   uint64
+              +--rw l2-technology
+              |  +--rw l2-type?              identityref
+              |  +--rw untagged-interface
+              |  |  +--rw speed?   uint32
+              |  |  +--rw mode?    neg-mode
+              |  +--rw tagged-interface
+              |  |  +--rw type?                identityref
+              |  |  +--rw dot1q-vlan-tagged
+              |  |  |  +--rw tg-type?    identityref
+              |  |  |  +--rw cvlan-id    uint16
+              |  |  +--rw priority-tagged
+              |  |     +--rw tag-type?   identityref
+              |  +--rw l2-mtu?               uint32
+              +--rw ip-connection
+                 +--rw ipv4
+                 |  +--rw address-allocation-type?   identityref
+                 |  +--rw dhcp
+                 |  |  +--rw primary-subnet
+                 |  |  |  +--rw ip-prefix?
+                 |  |  |  |       inet:ipv4-prefix
+                 |  |  |  +--rw default-router?       inet:ip-address
+                 |  |  |  +--rw provider-addresses*
+                 |  |  |  |       inet:ipv4-address
+                 |  |  |  +--rw subscriber-address?   inet:ip-address
+                 |  |  |  +--rw reserved-ip-prefix*   inet:ip-prefix
+                 |  |  +--rw secondary-subnet* [ip-prefix]
+                 |  |     +--rw ip-prefix
+                 |  |     |       inet:ipv4-prefix
+                 |  |     +--rw provider-addresses*
+                 |  |     |       inet:ipv4-address
+                 |  |     +--rw reserved-ip-prefix*
+                 |  |             inet:ipv4-prefix
+                 |  +--rw static
+                 |     +--rw primary-subnet
+                 |     |  +--rw ip-prefix?
+                 |     |  |       inet:ipv4-prefix
+                 |     |  +--rw default-router?       inet:ip-address
+                 |     |  +--rw provider-addresses*
+                 |     |  |       inet:ipv4-address
+                 |     |  +--rw subscriber-address?   inet:ip-address
+                 |     |  +--rw reserved-ip-prefix*   inet:ip-prefix
+                 |     +--rw secondary-subnet* [ip-prefix]
+                 |        +--rw ip-prefix
+                 |        |       inet:ipv4-prefix
+                 |        +--rw provider-addresses*
+                 |        |       inet:ipv4-address
+                 |        +--rw reserved-ip-prefix*
+                 |                inet:ipv4-prefix
+                 +--rw ipv6
+                    +--rw address-allocation-type?   identityref
+                    +--rw dhcp
+                    |  +--rw subnet* [ip-prefix]
+                    |     +--rw ip-prefix
+                    |     |       inet:ipv6-prefix
+                    |     +--rw provider-addresses*
+                    |     |       inet:ipv6-address
+                    |     +--rw reserved-ip-prefix*
+                    |             inet:ipv6-prefix
+                    +--rw slaac
+                    |  +--rw subnet* [ip-prefix]
+                    |     +--rw ip-prefix
+                    |     |       inet:ipv6-prefix
+                    |     +--rw provider-addresses*
+                    |     |       inet:ipv6-address
+                    |     +--rw reserved-ip-prefix*
+                    |             inet:ipv6-prefix
+                    +--rw static
+                       +--rw subnet* [ip-prefix]
+                       |  +--rw ip-prefix
+                       |  |       inet:ipv6-prefix
+                       |  +--rw provider-addresses*
+                       |  |       inet:ipv6-address
+                       |  +--rw reserved-ip-prefix*
+                       |          inet:ipv6-prefix
+                       +--rw subscriber-address?   inet:ipv6-address
+</artwork>
+      </figure>
+    </section>
+
+    <section title="YANG Modules">
+      <t>&lt;CODE BEGINS&gt; file "ietf-sdwan-svc@2019-06-06.yang"</t>
+
+      <figure>
+        <artwork>module ietf-sdwan-svc {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-sdwan-svc";
+  prefix sdwan-svc;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+
+  organization
+    "IETF foo Working Group.";
+  contact
+    "WG List: foo@ietf.org
+     Editor:  ";
+  description
+    "The YANG module defines a generic service configuration
+     model for Managed SD-WAN.";
+
+  revision 2019-03-10 {
+    description
+      "Initial revision";
+    reference "A YANG Data Model for SD-WAN service.";
+  }
+
+  typedef svc-id {
+    type string;
+    description
+      "Type definition for servicer identifier";
+  }
+
+  typedef address-family {
+    type enumeration {
+      enum ipv4 {
+        description
+          "IPv4 address family.";
+      }
+      enum ipv6 {
+        description
+          "IPv6 address family.";
+      }
+    }
+    description
+      "Defines a type for the address family.";
+  }
+
+  typedef neg-mode {
+    type enumeration {
+      enum full-duplex {
+        description
+          "Defining Full duplex mode";
+      }
+      enum auto-neg {
+        description
+          "Defining Auto negotiation mode";
+      }
+    }
+    description
+      "Defining a type of the negotiation mode";
+  }
+
+  typedef device-type {
+    type enumeration {
+      enum physical {
+        description
+          "Physical device";
+      }
+      enum virtual {
+        description
+          "Virtual device";
+      }
+    }
+    description
+      "Defines device types.";
+  }
+
+  identity device-type {
+    description
+      "Base identity for device type.";
+  }
+
+  identity virtual-ce {
+    base device-type;
+    description
+      "Identity for virtual-ce.";
+  }
+
+  identity physical-ce {
+    base device-type;
+    description
+      "Identity for physical-ce.";
+  }
+
+  identity customer-application {
+    description
+      "Base identity for customer application.";
+  }
+
+  identity web {
+    base customer-application;
+    description
+      "Identity for Web application (e.g., HTTP, HTTPS).";
+  }
+
+  identity mail {
+    base customer-application;
+    description
+      "Identity for mail application.";
+  }
+
+  identity file-transfer {
+    base customer-application;
+    description
+      "Identity for file transfer application (e.g., FTP, SFTP).";
+  }
+
+  identity database {
+    base customer-application;
+    description
+      "Identity for database application.";
+  }
+
+  identity social {
+    base customer-application;
+    description
+      "Identity for social-network application.";
+  }
+
+  identity games {
+    base customer-application;
+    description
+      "Identity for gaming application.";
+  }
+
+  identity p2p {
+    base customer-application;
+    description
+      "Identity for peer-to-peer application.";
+  }
+
+  identity network-management {
+    base customer-application;
+    description
+      "Identity for management application
+       (e.g., Telnet, syslog, SNMP).";
+  }
+
+  identity voice {
+    base customer-application;
+    description
+      "Identity for voice application.";
+  }
+
+  identity video {
+    base customer-application;
+    description
+      "Identity for video conference application.";
+  }
+
+  identity eth-inf-type {
+    description
+      "Identity of the Ethernet interface type.";
+  }
+
+  identity tagged {
+    base eth-inf-type;
+    description
+      "Identity of the tagged interface type.";
+  }
+
+  identity untagged {
+    base eth-inf-type;
+    description
+      "Identity of the untagged interface type.";
+  }
+
+  identity lag {
+    base eth-inf-type;
+    description
+      "Identity of the LAG interface type.";
+  }
+
+  identity tag-type {
+    description
+      "Base identity from which all tag types
+       are derived from";
+  }
+
+  identity c-vlan {
+    base tag-type;
+    description
+      "A Customer-VLAN tag, normally using the 0x8100
+       Ethertype";
+  }
+
+  identity tagged-inf-type {
+    description
+      "Identity for the tagged
+       interface type.";
+  }
+
+  identity dot1q {
+    base tagged-inf-type;
+    description
+      "Identity for dot1q vlan tagged interface.";
+  }
+
+  identity priority-tagged {
+    base tagged-inf-type;
+    description
+      "This identity the priority-tagged interface.";
+  }
+
+  identity vpn-topology {
+    description
+      "Base identity for vpn topology.";
+  }
+
+  identity any-to-any {
+    base vpn-topology;
+    description
+      "Identity for any-to-any VPN topology.";
+  }
+
+  identity hub-spoke {
+    base vpn-topology;
+    description
+      "Identity for Hub-and-Spoke VPN topology.";
+  }
+
+  identity site-role {
+    description
+      "Site Role in a VPN topology ";
+  }
+
+  identity any-to-any-role {
+    base site-role;
+    description
+      "Site in an any-to-any IP VPN.";
+  }
+
+  identity hub {
+    base site-role;
+    description
+      "Hub Role in Hub-and-Spoke IP VPN.";
+  }
+
+  identity spoke {
+    base site-role;
+    description
+      "Spoke Role in Hub-and-Spoke IP VPN.";
+  }
+
+  identity access-type {
+    description
+      "Access type of a site in a connection to different WAN";
+  }
+
+  identity commodity {
+    base access-type;
+    description
+      "Internet access";
+  }
+
+  identity cellular {
+    base access-type;
+    description
+      "Refers to a subset of 3G/4G/LTE and 5G";
+  }
+
+  identity private {
+    base access-type;
+    description
+      "Refers to private circuits such as Ethernet, T1, etc";
+  }
+
+  identity routing-protocol-type {
+    description
+      "Base identity for routing protocol type.";
+  }
+
+  identity ospf {
+    base routing-protocol-type;
+    description
+      "Identity for OSPF protocol type.";
+  }
+
+  identity bgp {
+    base routing-protocol-type;
+    description
+      "Identity for BGP protocol type.";
+  }
+
+  identity static {
+    base routing-protocol-type;
+    description
+      "Identity for static routing protocol type.";
+  }
+
+  identity address-allocation-type {
+    description
+      "Base identity for address-allocation-type for PE-CE link.";
+  }
+
+  identity dhcp {
+    base address-allocation-type;
+    description
+      "Provider network provides DHCP service to customer.";
+  }
+
+  identity static-address {
+    base address-allocation-type;
+    description
+      "Provider-to-customer addressing is static.";
+  }
+
+  identity slaac {
+    base address-allocation-type;
+    description
+      "Use IPv6 SLAAC.";
+  }
+
+  identity ll-only {
+    base address-allocation-type;
+    description
+      "Use IPv6 Link Local.";
+  }
+
+  identity traffic-direction {
+    description
+      "Base identity for traffic direction";
+  }
+
+  identity inbound {
+    base traffic-direction;
+    description
+      "Identity for inbound";
+  }
+
+  identity outbound {
+    base traffic-direction;
+    description
+      "Identity for outbound";
+  }
+
+  identity both {
+    base traffic-direction;
+    description
+      "Identity for both";
+  }
+
+  identity traffic-action {
+    description
+      "Base identity for traffic action";
+  }
+
+  identity permit {
+    base traffic-action;
+    description
+      "Identity for permit action";
+  }
+
+  identity deny {
+    base traffic-action;
+    description
+      "Identity for deny action";
+  }
+
+  identity bd-limit-type {
+    description
+      "base identity for bd limit type";
+  }
+
+  identity percent {
+    base bd-limit-type;
+    description
+      "Identity for percent";
+  }
+
+  identity value {
+    base bd-limit-type;
+    description
+      "Identity for value";
+  }
+
+  identity protocol-type {
+    description
+      "Base identity for protocol field type.";
+  }
+
+  identity tcp {
+    base protocol-type;
+    description
+      "TCP protocol type.";
+  }
+
+  identity udp {
+    base protocol-type;
+    description
+      "UDP protocol type.";
+  }
+
+  identity icmp {
+    base protocol-type;
+    description
+      "ICMP protocol type.";
+  }
+
+  identity icmp6 {
+    base protocol-type;
+    description
+      "ICMPv6 protocol type.";
+  }
+
+  identity gre {
+    base protocol-type;
+    description
+      "GRE protocol type.";
+  }
+
+  identity ipip {
+    base protocol-type;
+    description
+      "IP-in-IP protocol type.";
+  }
+
+  identity hop-by-hop {
+    base protocol-type;
+    description
+      "Hop-by-Hop IPv6 header type.";
+  }
+
+  identity routing {
+    base protocol-type;
+    description
+      "Routing IPv6 header type.";
+  }
+
+  identity esp {
+    base protocol-type;
+    description
+      "ESP header type.";
+  }
+
+  identity ah {
+    base protocol-type;
+    description
+      "AH header type.";
+  }
+
+  grouping vpn-endpoint {
+    leaf endpoint-id {
+      type svc-id;
+      description
+        "Identity for the vpn endpoint";
+    }
+          leaf site-role {
+            type identityref {
+              base site-role;
+            }
+            default "any-to-any-role";
+            description
+              "Role of the site in the VPN.";
+          }
+    container site-attachment {
+      leaf site-id {
+        type leafref {
+          path "/sdwan-svc/sites/site/site-id";
+        }
+        description
+          "Defines site id attached.";
+      }
+      description
+        "Defines site attachment to a vpn endpoint.";
+    }
+    container endpoint-policy-map {
+      list app-group-policy {
+        key "app-group-id";
+        leaf app-group-id {
+          type leafref {
+            path "/sdwan-svc/vpn-services/vpn-service/application-group/app-group-id";
+          }
+          description
+            "Identity for application";
+        }
+        leaf policy-id {
+          type leafref {
+            path "/sdwan-svc/vpn-services/vpn-service/policy/policy-id";
+          }
+          description
+            "Identity for value";
+        }
+        description
+          "list for application group policy";
+      }
+      list app-policy {
+        key "app-id";
+        leaf app-id {
+          type leafref {
+            path "/sdwan-svc/vpn-services/vpn-service/application/app-id";
+          }
+          description
+            "Identity for application";
+        }
+        leaf policy-id {
+          type leafref {
+            path "/sdwan-svc/vpn-services/vpn-service/policy/policy-id";
+          }
+          description
+            "Identity for value";
+        }
+        description
+          "list for application policy";
+      }
+      description
+        "Identity for policy maps";
+    }
+    description
+      "grouping for vpn endpoint";
+  }
+
+  grouping flow-definition {
+    container match-flow {
+      leaf ethertype {
+        type uint16;
+        description
+          "Ethertype value, e.g. 0800 for IPv4.";
+      }
+      leaf cvlan {
+        type uint8 {
+          range "0..7";
+        }
+        description
+          "802.1Q matching.";
+      }
+      leaf ipv4-src-prefix {
+        type inet:ipv4-prefix;
+        description
+          "Match on IPv4 src address.";
+      }
+      leaf ipv4-dst-prefix {
+        type inet:ipv4-prefix;
+        description
+          "Match on IPv4 dst address.";
+      }
+      leaf l4-src-port {
+        type inet:port-number;
+        description
+          "Match on Layer 4 src port.";
+      }
+      leaf l4-dst-port {
+        type inet:port-number;
+        description
+          "Match on Layer 4 dst port.";
+      }
+      leaf ipv6-src-prefix {
+        type inet:ipv6-prefix;
+        description
+          "Match on IPv6 src address.";
+      }
+      leaf ipv6-dst-prefix {
+        type inet:ipv6-prefix;
+        description
+          "Match on IPv6 dst address.";
+      }
+      leaf protocol-field {
+        type union {
+          type uint8;
+          type identityref {
+            base protocol-type;
+          }
+        }
+        description
+          "Match on IPv4 protocol or IPv6 Next Header field.";
+      }
+      description
+        "Describes flow-matching criteria.";
+    }
+    description
+      "groupin flow definition.";
+  }
+
+  grouping application-criteria {
+    list ac {
+      key "name";
+      ordered-by user;
+      leaf name {
+        type string;
+        description
+          "A description identifying application classification
+           criteria.";
+      }
+      choice match-type {
+        default "match-flow";
+        case match-flow {
+          uses flow-definition;
+        }
+        case match-application {
+          leaf match-application {
+            type identityref {
+              base customer-application;
+            }
+            description
+              "Defines the application to match.";
+          }
+        }
+        description
+          "Choice for classification.";
+      }
+      description
+        "List of marking rules.";
+    }
+    description
+      "This grouping defines QoS parameters for a site.";
+  }
+
+  grouping vpn-service {
+    leaf vpn-id {
+      type svc-id;
+      description
+        "Identity for VPN.";
+    }
+        leaf topology {
+          type identityref {
+            base vpn-topology;
+          }
+          description
+            "vpn topology: hub&amp;spoke or any-to-any";
+        }
+    container performance-objective {
+      leaf start-time {
+        type yang:date-and-time;
+        description
+          "start-time indicats date and time.";
+      }
+      leaf duration {
+        type string;
+        description
+          "Time duration.";
+      }
+      container uptime-objective {
+        leaf duration {
+          type decimal64 {
+            fraction-digits 5;
+            range "0..100";
+          }
+          units "percent";
+          description
+            "To be used to define the a percentage of the available
+             service.";
+        }
+        description
+          "Uptime objective.";
+      }
+      description
+        "The performance objective.";
+    }
+    container reserved-prefixes {
+      leaf-list prefix {
+        type inet:ip-prefix;
+        description
+          "ip prefix reserved for SP managment purpose.";
+      }
+      description
+        "ip prefix list reserved for SP managment purpose.";
+    }
+    list application {
+      key "app-id";
+      leaf app-id {
+        type svc-id;
+        description
+          "application name";
+      }
+      uses application-criteria;
+      description
+        "list for application";
+    }
+    list application-group {
+      key "app-group-id";
+      leaf app-group-id {
+        type svc-id;
+        description
+          "application name";
+      }
+      leaf-list app-id {
+        type leafref {
+          path "../../application/app-id";
+        }
+        description
+          "application member list in an application group";
+      }
+      description
+        "list for application group";
+    }
+    list policy {
+      key "policy-id";
+      leaf policy-id {
+        type svc-id;
+        description
+          "Policy names";
+      }
+      container policy-package {
+        leaf encryption {
+          type enumeration {
+            enum yes {
+              description
+                "Indicates whether or not the application flow requires
+                 to send over encrypted overlay tunnel.";
+            }
+            enum either {
+              description
+                " Either means this policy is not applied";
+            }
+          }
+          description
+            "Indicates whether or not the application flow requires
+             encryption.";
+        }
+        leaf public-private {
+          type enumeration {
+            enum private-only {
+              description
+                "The private WAN underlay is specified.";
+            }
+            enum either {
+              description
+                "Both public WAN or private WAN could be used";
+            }
+          }
+          description
+            "Indicates whether the Application Flow can traverse
+             Public or Private Underlay Connectivity Services
+             (or both).&ldquo;Either&rdquo; means this policy is not applied.";
+        }
+        leaf local-breakout {
+          type boolean;
+          description
+            "indicates whether the Application Flow should be
+             routed directly to the Internet using Local Internet
+             Breakout.It can have values Yes and No.";
+        }
+        leaf billing-method {
+          type enumeration {
+            enum flat-only {
+              description
+                "Only flat-rate underlay could be used for the
+                 traffic.";
+            }
+            enum either {
+              description
+                "Either flat-rate or usage based underlay could
+                 be used for the traffic.";
+            }
+          }
+          description
+            "billing policy.";
+        }
+        leaf backup-path {
+          type enumeration {
+            enum yes {
+              description
+                "Only the primary tunnel overlay could be used for
+                 the traffic.";
+            }
+            enum no {
+              description
+                "Either the primary or backup overlay tunnel could be
+                 used for the traffic.";
+            }
+          }
+          description
+            "overlay connection as Primary or both Primary and
+             Backup.";
+        }
+        container bandwith {
+          leaf commit {
+            type uint32;
+            description
+              "CIR";
+          }
+          leaf max {
+            type uint32;
+            description
+              "max speed ";
+          }
+          description
+            "Container for the bandwidth policy";
+        }
+        description
+          "List for policy";
+      }
+    }
+    list endpoints {
+      key "endpoint-id";
+      uses vpn-endpoint;
+      description
+        "List of endpoints.";
+    }
+    description
+      "List of vpn service";
+  }
+
+  grouping site-l2-technology {
+    container l2-technology {
+      leaf l2-type {
+        type identityref {
+          base eth-inf-type;
+        }
+        default "untagged";
+        description
+          "Defines physical properties of an interface. By default, the
+            Ethernet interface type is set to &rsquo;untagged&rsquo;.";
+      }
+      container untagged-interface {
+        leaf speed {
+          type uint32;
+          units "mbps";
+          default "10";
+          description
+            "Port speed.";
+        }
+        leaf mode {
+          type neg-mode;
+          default "auto-neg";
+          description
+            "Negotiation mode.";
+        }
+        description
+          "Container of Untagged Interface Attributes
+           configurations.";
+      }
+      container tagged-interface {
+        leaf type {
+          type identityref {
+            base tagged-inf-type;
+          }
+          default "dot1q";
+          description
+            "Tagged interface type. By default,
+             the Tagged interface type is dot1q interface. ";
+        }
+        container dot1q-vlan-tagged {
+          leaf tg-type {
+            type identityref {
+              base tag-type;
+            }
+            default "c-vlan";
+            description
+              "TAG type.By default, Tag type is Customer-VLAN tag.";
+          }
+          leaf cvlan-id {
+            type uint16;
+            mandatory true;
+            description
+              "VLAN identifier.";
+          }
+          description
+            "Tagged interface.";
+        }
+        container priority-tagged {
+          leaf tag-type {
+            type identityref {
+              base tag-type;
+            }
+            default "c-vlan";
+            description
+              "TAG type.By default, the TAG type is
+               Customer-VLAN tag.";
+          }
+          description
+            "Priority tagged.";
+        }
+        description
+          "Container for tagged Interface.";
+      }
+      leaf l2-mtu {
+        type uint32;
+        units "bytes";
+        description
+          " L2 Maximum Frame Size MUST be an integer number of bytes
+           &ge; 1522MTU.";
+      }
+      description
+        "Container for l2 technology.";
+    }
+    description
+      "grouping for l2 technology.";
+  }
+
+  grouping site-ip-connection {
+    container ip-connection {
+      container ipv4 {
+        leaf address-allocation-type {
+          type identityref {
+            base address-allocation-type;
+          }
+          description
+            "Defines how addresses are allocated.
+             If there is no value for address
+             allocation type, then the ipv4 is not enabled.";
+        }
+        container dhcp {
+          container primary-subnet {
+            leaf ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "IPv4 address prefix and mask length between 0 and 31,
+                 in bits.";
+            }
+            leaf default-router {
+              type inet:ip-address;
+              description
+                "Address of default router.";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv4-address;
+              description
+                "the Service Provider IPv4 Addresses MUST be within the
+                 specified IPv4 Prefix.";
+            }
+            leaf subscriber-address {
+              type inet:ip-address;
+              description
+                "subscriber IPv4 Addresses: Non-empty list
+                 of IPv4 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ip-prefix;
+              description
+                "List of IPv4 Prefixes, possibly empty";
+            }
+            description
+              "Primary Subnet List";
+          }
+          list secondary-subnet {
+            key "ip-prefix";
+            leaf ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "IPv4 address prefix and mask length between 0 and 31,
+                 in bits";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv4-address;
+              description
+                "Service Provider IPv4 Addresses: Non-empty list
+                 of IPv4 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "List of IPv4 Prefixes, possibly empty";
+            }
+            description
+              "Secondary Subnet List";
+          }
+          description
+            "DHCP allocated addresses related parameters.";
+        }
+        container static {
+          container primary-subnet {
+            leaf ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "IPv4 address prefix and mask length between 0 and 31,
+                 in bits.";
+            }
+            leaf default-router {
+              type inet:ip-address;
+              description
+                "Address of default router.";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv4-address;
+              description
+                "the Service Provider IPv4 Addresses MUST be within the
+                 specified IPv4 Prefix.";
+            }
+            leaf subscriber-address {
+              type inet:ip-address;
+              description
+                "subscriber IPv4 Addresses: Non-empty list
+                 of IPv4 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ip-prefix;
+              description
+                "List of IPv4 Prefixes, possibly empty";
+            }
+            description
+              "Primary Subnet List";
+          }
+          list secondary-subnet {
+            key "ip-prefix";
+            leaf ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "IPv4 address prefix and mask length between 0 and 31,
+                 in bits";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv4-address;
+              description
+                "Service Provider IPv4 Addresses: Non-empty list
+                 of IPv4 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ipv4-prefix;
+              description
+                "List of IPv4 Prefixes, possibly empty";
+            }
+            description
+              "Secondary Subnet List";
+          }
+          description
+            "Static configuration related parameters.";
+        }
+        description
+          "IPv4-specific parameters.";
+      }
+      container ipv6 {
+        leaf address-allocation-type {
+          type identityref {
+            base address-allocation-type;
+          }
+          description
+            "Defines how addresses are allocated.
+             If there is no value for address
+             allocation type, then the ipv6 is not enabled.";
+        }
+        container dhcp {
+          list subnet {
+            key "ip-prefix";
+            leaf ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "IPv6 address prefix and prefix length between 0 and
+                 128";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv6-address;
+              description
+                "Non-empty list of IPv6 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "List of IPv6 Prefixes, possibly empty";
+            }
+            description
+              "Subnet List";
+          }
+          description
+            "DHCP allocated addresses related parameters.";
+        }
+        container slaac {
+          list subnet {
+            key "ip-prefix";
+            leaf ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "IPv6 address prefix and prefix length of 64 ";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv6-address;
+              description
+                "Non-empty list of IPv6 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "List of IPv6 Prefixes, possibly empty";
+            }
+            description
+              "Subnet List";
+          }
+          description
+            "DHCP allocated addresses related parameters.";
+        }
+        container static {
+          list subnet {
+            key "ip-prefix";
+            leaf ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "IPv6 address prefix and prefix length between 0 and
+                 128";
+            }
+            leaf-list provider-addresses {
+              type inet:ipv6-address;
+              description
+                "Non-empty list of IPv6 addresses";
+            }
+            leaf-list reserved-ip-prefix {
+              type inet:ipv6-prefix;
+              description
+                "List of IPv6 Prefixes, possibly empty";
+            }
+            description
+              "Subnet List";
+          }
+          leaf subscriber-address {
+            type inet:ipv6-address;
+            description
+              "IPv6 address or Not Specified.";
+          }
+          description
+            "Static configuration related parameters.";
+        }
+        description
+          "Describes IPv6 addresses used.";
+      }
+      description
+        "IPv6-specific parameters.";
+    }
+    description
+      "This grouping defines IP connection parameters.";
+  }
+
+  container sdwan-svc {
+    container vpn-services {
+      list vpn-service {
+        key "vpn-id";
+        uses vpn-service;
+        description
+          "List for SD-WAN";
+      }
+      description
+        "Container for SD-WAN VPN service";
+    }
+    container sites {
+      list site {
+        key "site-id";
+        leaf site-id {
+          type svc-id;
+          description
+            "Site Name";
+        }
+          list device {
+            key "name";
+            leaf name {
+              type string;
+              description
+                "Device Name";
+            }
+            leaf type {
+            type identityref {
+              base device-type;
+            }
+            description
+              "Device Type: virtual or physical CE";
+          }
+            description
+              "List for device";
+          }
+
+        list lan-access {
+          key "name";
+          leaf name {
+            type string;
+            description
+              "lan access link name";
+          }
+          uses site-l2-technology;
+          uses site-ip-connection;
+          description
+            "container for lan access";
+        }
+        list wan-access {
+          key "name";
+          leaf name {
+            type string;
+            description
+              "wan access link name";
+          }
+          leaf access-type {
+            type identityref {
+              base access-type;
+            }
+            description
+              "Access type: Internet, private VPN or cellular";
+          }
+          leaf access-provider {
+            type string;
+            description
+              "Specifies the name of provider";
+          }
+          container bandwidth {
+            leaf input-bandwidth {
+              type uint64;
+              description
+                "input bandwidth";
+            }
+            leaf output-bandwidth {
+              type uint64;
+              description
+                "output bandwidth";
+            }
+            description
+              "Container for bandwidth";
+          }
+          uses site-l2-technology;
+          uses site-ip-connection;
+          description
+            "container for wan access";
+        }
+        description
+          "List for site";
+      }
+      description
+        "Container for sites";
+    }
+    description
+      "Top-level container for the SD-WAN services.";
+  }
+} </artwork>
+      </figure>
+
+      <t>&lt;CODE ENDS&gt;</t>
+    </section>
+
+    <section title="Security Considerations">
+      <t>The YANG module specified in this document defines a schema for data
+      that is designed to be accessed via network management protocols such as
+      NETCONF [RFC6241] or RESTCONF [RFC8040]. The lowest NETCONF layer is the
+      secure transport layer, and the mandatory-to-implement secure transport
+      is Secure Shell (SSH) [RFC6242]. The lowest RESTCONF layer is HTTPS, and
+      the mandatory-to-implement secure transport is TLS [RFC5246].</t>
+
+      <t>The NETCONF access control model [RFC6536]provides the means to
+      restrict access for particular NETCONF or RESTCONF users to a
+      preconfigured subset of all available NETCONF or RESTCONF protocol
+      operations and content.</t>
+
+      <t>There are a number of data nodes defined in this YANG module that are
+      writable/creatable/deletable (i.e., config true, which is the default).
+      These data nodes may be considered sensitive or vulnerable in some
+      network environments. Write operations (e.g., edit-config) to these data
+      nodes without proper protection can have a negative effect on network
+      operations. These are the subtrees and data nodes and their
+      sensitivity/vulnerability.</t>
+    </section>
+
+    <section title="IANA Considerations">
+      <t>IANA has assigned a new URI from the "IETF XML Registry"
+      [RFC3688].</t>
+
+      <figure>
+        <artwork>             URI: urn:ietf:params:xml:ns:yang:ietf-sdwan-vpn-svc
+             Registrant Contact: The IESG
+             XML: N/A; the requested URI is an XML namespace.</artwork>
+      </figure>
+
+      <t>IANA has recorded a YANG module name in the "YANG Module Names"
+      registry [RFC6020] as follows:</t>
+
+      <figure>
+        <artwork>           Name: ietf-sdwan-vpn-svc
+           Namespace: urn:ietf:params:xml:ns:yang:ietf-sdwan-vpn-svc
+           Prefix: sdwan-svc
+           Reference: RFC xxxx</artwork>
+      </figure>
+    </section>
+
+    <section title="Appendix 1: Terminology Mapping between MEF SD-WAN Service Attributes and IETF SD-WAN model ">
+      <t><xref target="MEF70">MEF 70 R1</xref> defines the SD-WAN Service
+      Attributes and Services for SD-WAN service delivery, that can be used
+      for communication between Subscribers and SPs to deliver SD-WAN services
+      while this draft define YANG data model for SD-WAN Service delivery
+      communicated between customer and service provider. The purpose of both
+      work is very similar.</t>
+
+      <t>The below table shows the terminology mapping. The YANG model retains
+      most parameter definition name but adjusts some of the structure to
+      preserve the space for future augmentation. Such as the model defines
+      "vpn-service" and "lan-access" as a list, which can accommodate the case
+      where the current MEF service attribute restricts only one VPN per
+      customer and one LAN access and future extension to multiple VPN or LAN
+      accesses per customer.<figure>
+          <artwork> +----------------------------+----------------------------------+
+ | IETF SD-WAN Service model  | MEF70 R1 SD-WAN Services Term    |
+ +----------------------------+----------------------------------+
+ | SD-WAN VPN                 | SD-WAN Virtual Connection (SWVC) |
+ +----------------------------+----------------------------------+
+ | SD-WAN VPN Endpoint        | SWVC End Point                   |
+ +----------------------------+----------------------------------+
+ | Site                       | User Network Interface(UNI)      |
+ +----------------------------+----------------------------------+
+ | lan-access                 | UNI link Attributes              |
+ +----------------------------+----------------------------------+
+ | wan-access                 | TBD( Underlay connectivity)      |
+ +----------------------------+----------------------------------+</artwork>
+        </figure></t>
+    </section>
+
+    <section title="Appendix 2: IETF OSE model vs IETF SD-WAN model">
+      <t><xref target="I-D.wood-rtgwg-sdwan-ose-yang">SD-WAN OSE service
+      delivery model </xref> defines two SD-WAN OSE Open SD-WAN Exchange(OSE)
+      service YANG modules to enable the orchestrator in the enterprise
+      network to implement SD-WAN inter-domain reachability and connectivity
+      services and application aware traffic steering services. Although the
+      ose yang model is also a service model, instead of being a device model,
+      this model is mainly used for interoperability between multiple SD-WAN
+      domains and service consistency. The differences are shown as
+      follows:</t>
+
+      <figure>
+        <artwork>+----------------------------------+-------------------------------+
+| IETF OSE service model           | IETF SD-WAN Service model     |
++----------------------------------+-------------------------------+
+| Domain SD-WAN controller facing  | customer-facing               |
+|                                  |                               |
++----------------------------------+-------------------------------+
+| Inter OSE GW connectivity service|unaware of SD-WAN domain in    |
+|                                  |one SP network                 |
+|      Inter SD-WAN domain         |Inter-SD-WAN Service Provider  |
+|                                  |TBD                            |
++----------------------------------+-------------------------------+
+| SLA aware dynamic Path selection |static Primary/Backup selection|
++----------------------------------+-------------------------------+</artwork>
+      </figure>
+
+      <t>For the SLA based dynamic path selection policy, the OSE service
+      model uses a similar application classification criteria, but at the
+      same time it will collect the relevant status of the traffic SLA profile
+      and, based on the measurements calculated from the collected
+      information, the primary or secondary path will be selected.</t>
+
+      <t><figure>
+          <artwork> +--primary-backup
+      +--rw path-values
+         +--rw sla-values
+            +--rw latency?            uint32
+            +--rw jitter?             uint32
+            +--rw packet-loss-rate?   uint32</artwork>
+        </figure></t>
+    </section>
+
+    <section title="Acknowledgments">
+      <t>This work has benefited from the discussions of with Jack
+      Pugaczewski,Larry S Samberg,Pascal Menezes from MEF community.</t>
+    </section>
+
+    <section title="Contributors">
+      <t>The authors would like to thank Zitao Wang for his major
+      contributions to the initial modeling.</t>
+    </section>
+  </middle>
+
+  <!--  *****BACK MATTER ***** -->
+
+  <back>
+    <!-- References split into informative and normative -->
+
+    <!-- There are 2 ways to insert reference entries from the citation libraries:
+    1. define an ENTITY at the top, and use "ampersand character"RFC2629;
+        here (as shown)
+    2. simply use a PI
+        "less than character"?rfc include="reference.RFC.2119.xml"?> here
+        (for I-Ds:
+          include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+    Both are cited textually in the same manner: by using xref elements.
+    If you use the PI option, xml2rfc will, by default, try to find included
+    files in the same directory as the including file. You can also define
+    the XML_LIBRARY environment variable
+    with a value containing a set of directories to search.  These can be
+    either in the local
+    filing system or remote ones accessed by http (http://domain/dir/... ).-->
+
+    <references title="Normative References">
+      <?rfc include='reference.RFC.2119'?>
+
+      <?rfc include='reference.RFC.4026'?>
+
+      <?rfc include='reference.RFC.4364'?>
+
+      <?rfc include='reference.RFC.4664'?>
+
+      <?rfc include='reference.RFC.6071'?>
+
+      <?rfc include='reference.RFC.6020'?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.I-D.wood-rtgwg-sdwan-ose-yang'?>
+
+      <?rfc include='reference.RFC.4110'?>
+
+      <?rfc include='reference.RFC.7364'?>
+
+      <?rfc include='reference.RFC.7426'?>
+
+      <?rfc include='reference.RFC.8299'?>
+
+      <?rfc include='reference.RFC.8466'?>
+
+      <?rfc include='reference.RFC.2784'?>
+
+      <reference anchor="MEF70">
+        <front>
+          <title>SD-WAN Service Attributes and Service</title>
+
+          <author fullname="MEF" role="editor"/>
+
+          <date/>
+        </front>
+      </reference>
+    </references>
+
+    <!-- Change Log
+v00 2018-06-17  SS    Initial version
+    -->
+  </back>
+</rfc>
