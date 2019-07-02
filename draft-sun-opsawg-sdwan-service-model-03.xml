@@ -106,7 +106,8 @@
       </address>
     </author>
 
-    <author fullname="Charles Eckel " initials="C." surname="Eckel">
+    <author fullname="Charles Eckel " initials="C." role="editor"
+            surname="Eckel">
       <organization>Cisco Systems</organization>
 
       <address>
@@ -148,7 +149,7 @@
       target="RFC8466">Layer 2 VPN Service Model</xref>, an SD-WAN service is
       a CE-based connectivity service that uses the Internet or PE-based
       connectivity services as underlay connectivity services. More specially,
-      an SD-WAN service is an overlay connectively service that provides the
+      an SD-WAN service is an overlay connectivity service that provides the
       flexibility of adding, removing, or moving services without needing to
       change the underlay networks.</t>
 
@@ -160,10 +161,9 @@
           access technologies, including fiber, cable, DSL-based, WiFi, or
           4G/Long Term Evolution (LTE), which implies wider reachability and
           shorter provisioning cycles. It can also use private VPN
-          connectivity services defined in <xref target="RFC4364"/> and <xref
-          target="RFC4664"/>, or Operator Ethernet Services, as defined in
-          <xref target="MEF51.1"/>, to take advantage of better
-          performance.</t>
+          connectivity services defined in [RFC4364] and [RFC4664], or
+          Operator Ethernet Services, as defined in <xref target="MEF51.1"/>,
+          to take advantage of better performance.</t>
 
           <t>Application based traffic forwarding: There are diverse
           applications used in enterprises, such as VoIP calling, video
@@ -842,10 +842,10 @@ will be classified in app-id 2.
     </section>
 
     <section title="YANG Modules">
-      <t>&lt;CODE BEGINS&gt; file "ietf-sdwan-svc@2019-06-06.yang"</t>
-
       <figure>
-        <artwork>module ietf-sdwan-svc {
+        <artwork>&lt;CODE BEGINS&gt; file "ietf-sdwan-svc@2019-06-06.yang"
+
+module ietf-sdwan-svc {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-sdwan-svc";
   prefix sdwan-svc;
@@ -866,7 +866,7 @@ will be classified in app-id 2.
     "The YANG module defines a generic service configuration
      model for Managed SD-WAN.";
 
-  revision 2019-03-10 {
+  revision 2019-06-06 {
     description
       "Initial revision";
     reference "A YANG Data Model for SD-WAN service.";
@@ -875,7 +875,7 @@ will be classified in app-id 2.
   typedef svc-id {
     type string;
     description
-      "Type definition for servicer identifier";
+      "Type definition for service identifier";
   }
 
   typedef address-family {
@@ -1303,14 +1303,14 @@ will be classified in app-id 2.
       description
         "Identity for the vpn endpoint";
     }
-          leaf site-role {
-            type identityref {
-              base site-role;
-            }
-            default "any-to-any-role";
-            description
-              "Role of the site in the VPN.";
-          }
+    leaf site-role {
+      type identityref {
+        base site-role;
+      }
+      default "any-to-any-role";
+      description
+        "Role of the site in the VPN.";
+    }
     container site-attachment {
       leaf site-id {
         type leafref {
@@ -1327,7 +1327,8 @@ will be classified in app-id 2.
         key "app-group-id";
         leaf app-group-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service/application-group/app-group-id";
+            path "/sdwan-svc/vpn-services/vpn-service"+
+            "/application-group/app-group-id";
           }
           description
             "Identity for application";
@@ -1346,7 +1347,8 @@ will be classified in app-id 2.
         key "app-id";
         leaf app-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service/application/app-id";
+            path "/sdwan-svc/vpn-services/vpn-service"+
+            "/application/app-id";
           }
           description
             "Identity for application";
@@ -1426,7 +1428,7 @@ will be classified in app-id 2.
         "Describes flow-matching criteria.";
     }
     description
-      "groupin flow definition.";
+      "Grouping for flow definition.";
   }
 
   grouping application-criteria {
@@ -1469,13 +1471,13 @@ will be classified in app-id 2.
       description
         "Identity for VPN.";
     }
-        leaf topology {
-          type identityref {
-            base vpn-topology;
-          }
-          description
-            "vpn topology: hub&amp;spoke or any-to-any";
-        }
+    leaf topology {
+      type identityref {
+        base vpn-topology;
+      }
+      description
+        "vpn topology: hub-and-spoke or any-to-any";
+    }
     container performance-objective {
       leaf start-time {
         type yang:date-and-time;
@@ -1579,7 +1581,7 @@ will be classified in app-id 2.
           description
             "Indicates whether the Application Flow can traverse
              Public or Private Underlay Connectivity Services
-             (or both).&ldquo;Either&rdquo; means this policy is not applied.";
+             (or both).Either means this policy is not applied.";
         }
         leaf local-breakout {
           type boolean;
@@ -1636,8 +1638,10 @@ will be classified in app-id 2.
             "Container for the bandwidth policy";
         }
         description
-          "List for policy";
+          "Container for policy package";
       }
+      description
+        "List for policy";
     }
     list endpoints {
       key "endpoint-id";
@@ -1646,7 +1650,7 @@ will be classified in app-id 2.
         "List of endpoints.";
     }
     description
-      "List of vpn service";
+      "Grouping of vpn service";
   }
 
   grouping site-l2-technology {
@@ -1985,24 +1989,23 @@ will be classified in app-id 2.
           description
             "Site Name";
         }
-          list device {
-            key "name";
-            leaf name {
-              type string;
-              description
-                "Device Name";
-            }
-            leaf type {
+        list device {
+          key "name";
+          leaf name {
+            type string;
+            description
+              "Device Name";
+          }
+          leaf type {
             type identityref {
               base device-type;
             }
             description
               "Device Type: virtual or physical CE";
           }
-            description
-              "List for device";
-          }
-
+          description
+            "List for device";
+        }
         list lan-access {
           key "name";
           leaf name {
@@ -2062,10 +2065,10 @@ will be classified in app-id 2.
     description
       "Top-level container for the SD-WAN services.";
   }
-} </artwork>
-      </figure>
+}
 
-      <t>&lt;CODE ENDS&gt;</t>
+&lt;CODE ENDS&gt;</artwork>
+      </figure>
     </section>
 
     <section title="Security Considerations">
@@ -2074,9 +2077,9 @@ will be classified in app-id 2.
       NETCONF [RFC6241] or RESTCONF [RFC8040]. The lowest NETCONF layer is the
       secure transport layer, and the mandatory-to-implement secure transport
       is Secure Shell (SSH) [RFC6242]. The lowest RESTCONF layer is HTTPS, and
-      the mandatory-to-implement secure transport is TLS [RFC5246].</t>
+      the mandatory-to-implement secure transport is TLS [RFC8446].</t>
 
-      <t>The NETCONF access control model [RFC6536] provides the means to
+      <t>The NETCONF access control model [RFC8341] provides the means to
       restrict access for particular NETCONF or RESTCONF users to a
       preconfigured subset of all available NETCONF or RESTCONF protocol
       operations and content.</t>
@@ -2101,7 +2104,7 @@ will be classified in app-id 2.
       </figure>
 
       <t>IANA has recorded a YANG module name in the "YANG Module Names"
-      registry <xref target="RFC6020"/> as follows:</t>
+      registry [RFC6020] as follows:</t>
 
       <figure>
         <artwork>           Name: ietf-sdwan-svc
@@ -2219,6 +2222,12 @@ will be classified in app-id 2.
 
     <references title="Normative References">
       <?rfc include='reference.RFC.2119'?>
+    </references>
+
+    <references title="Informative References">
+      <?rfc include='reference.I-D.wood-rtgwg-sdwan-ose-yang'?>
+
+      <?rfc include='reference.RFC.3688'?>
 
       <?rfc include='reference.RFC.4026'?>
 
@@ -2226,17 +2235,23 @@ will be classified in app-id 2.
 
       <?rfc include='reference.RFC.4664'?>
 
+      <?rfc include='reference.RFC.6020'?>
+
       <?rfc include='reference.RFC.6071'?>
 
-      <?rfc include='reference.RFC.6020'?>
-    </references>
+      <?rfc include='reference.RFC.6241'?>
 
-    <references title="Informative References">
-      <?rfc include='reference.I-D.wood-rtgwg-sdwan-ose-yang'?>
+      <?rfc include='reference.RFC.6242'?>
 
       <?rfc include='reference.RFC.7426'?>
 
+      <?rfc include='reference.RFC.8040'?>
+
       <?rfc include='reference.RFC.8299'?>
+
+      <?rfc include='reference.RFC.8341'?>
+
+      <?rfc include='reference.RFC.8446'?>
 
       <?rfc include='reference.RFC.8466'?>
 
