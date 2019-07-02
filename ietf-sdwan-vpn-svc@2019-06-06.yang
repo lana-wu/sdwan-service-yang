@@ -19,7 +19,7 @@ module ietf-sdwan-svc {
     "The YANG module defines a generic service configuration
      model for Managed SD-WAN.";
 
-  revision 2019-06-06 {
+  revision 2019-03-10 {
     description
       "Initial revision";
     reference "A YANG Data Model for SD-WAN service.";
@@ -28,7 +28,7 @@ module ietf-sdwan-svc {
   typedef svc-id {
     type string;
     description
-      "Type definition for service identifier";
+      "Type definition for servicer identifier";
   }
 
   typedef address-family {
@@ -456,14 +456,14 @@ module ietf-sdwan-svc {
       description
         "Identity for the vpn endpoint";
     }
-    leaf site-role {
-      type identityref {
-        base site-role;
-      }
-      default "any-to-any-role";
-      description
-        "Role of the site in the VPN.";
-    }
+          leaf site-role {
+            type identityref {
+              base site-role;
+            }
+            default "any-to-any-role";
+            description
+              "Role of the site in the VPN.";
+          }
     container site-attachment {
       leaf site-id {
         type leafref {
@@ -480,8 +480,7 @@ module ietf-sdwan-svc {
         key "app-group-id";
         leaf app-group-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service"+
-            "/application-group/app-group-id";
+            path "/sdwan-svc/vpn-services/vpn-service/application-group/app-group-id";
           }
           description
             "Identity for application";
@@ -500,8 +499,7 @@ module ietf-sdwan-svc {
         key "app-id";
         leaf app-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service"+
-            "/application/app-id";
+            path "/sdwan-svc/vpn-services/vpn-service/application/app-id";
           }
           description
             "Identity for application";
@@ -581,7 +579,7 @@ module ietf-sdwan-svc {
         "Describes flow-matching criteria.";
     }
     description
-      "Grouping for flow definition.";
+      "groupin flow definition.";
   }
 
   grouping application-criteria {
@@ -624,18 +622,18 @@ module ietf-sdwan-svc {
       description
         "Identity for VPN.";
     }
-    leaf topology {
-      type identityref {
-        base vpn-topology;
-      }
-      description
-        "vpn topology: hub-and-spoke or any-to-any";
-    }
+        leaf topology {
+          type identityref {
+            base vpn-topology;
+          }
+          description
+            "vpn topology: hub&spoke or any-to-any";
+        }
     container performance-objective {
       leaf start-time {
         type yang:date-and-time;
         description
-          "start-time indicates date and time.";
+          "start-time indicats date and time.";
       }
       leaf duration {
         type string;
@@ -663,10 +661,10 @@ module ietf-sdwan-svc {
       leaf-list prefix {
         type inet:ip-prefix;
         description
-          "ip prefix reserved for SP management purpose.";
+          "ip prefix reserved for SP managment purpose.";
       }
       description
-        "ip prefix list reserved for SP management purpose.";
+        "ip prefix list reserved for SP managment purpose.";
     }
     list application {
       key "app-id";
@@ -734,7 +732,7 @@ module ietf-sdwan-svc {
           description
             "Indicates whether the Application Flow can traverse
              Public or Private Underlay Connectivity Services
-             (or both).Either means this policy is not applied.";
+             (or both).“Either” means this policy is not applied.";
         }
         leaf local-breakout {
           type boolean;
@@ -776,7 +774,7 @@ module ietf-sdwan-svc {
             "overlay connection as Primary or both Primary and
              Backup.";
         }
-        container bandwidth {
+        container bandwith {
           leaf commit {
             type uint32;
             description
@@ -791,10 +789,8 @@ module ietf-sdwan-svc {
             "Container for the bandwidth policy";
         }
         description
-          "Container for policy package";
+          "List for policy";
       }
-      description
-        "List for policy";
     }
     list endpoints {
       key "endpoint-id";
@@ -803,7 +799,7 @@ module ietf-sdwan-svc {
         "List of endpoints.";
     }
     description
-      "Grouping of vpn service";
+      "List of vpn service";
   }
 
   grouping site-l2-technology {
@@ -1142,23 +1138,24 @@ module ietf-sdwan-svc {
           description
             "Site Name";
         }
-        list device {
-          key "name";
-          leaf name {
-            type string;
-            description
-              "Device Name";
-          }
-          leaf type {
+          list device {
+            key "name";
+            leaf name {
+              type string;
+              description
+                "Device Name";
+            }
+            leaf type {
             type identityref {
               base device-type;
             }
             description
               "Device Type: virtual or physical CE";
           }
-          description
-            "List for device";
-        }
+            description
+              "List for device";
+          }
+
         list lan-access {
           key "name";
           leaf name {
