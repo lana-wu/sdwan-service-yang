@@ -160,9 +160,10 @@
           access technologies, including fiber, cable, DSL-based, WiFi, or
           4G/Long Term Evolution (LTE), which implies wider reachability and
           shorter provisioning cycles. It can also use private VPN
-          connectivity services defined in [RFC4364] and [RFC4664], or
-          Operator Ethernet Services, as defined in <xref target="MEF51.1"/>,
-          to take advantage of better performance.</t>
+          connectivity services defined in <xref target="RFC4364"/> and <xref
+          target="RFC4664"/>, or Operator Ethernet Services, as defined in
+          <xref target="MEF51.1"/>, to take advantage of better
+          performance.</t>
 
           <t>Application based traffic forwarding: There are diverse
           applications used in enterprises, such as VoIP calling, video
@@ -656,7 +657,7 @@ will be classified in app-id 2.
      |     |     +--rw local-breakout?   boolean
      |     |     +--rw billing-method?   enumeration
      |     |     +--rw backup-path?      enumeration
-     |     |     +--rw bandwith
+     |     |     +--rw bandwidth
      |     |        +--rw commit?   uint32
      |     |        +--rw max?      uint32
      |     +--rw endpoints* [endpoint-id]
@@ -1479,7 +1480,7 @@ will be classified in app-id 2.
       leaf start-time {
         type yang:date-and-time;
         description
-          "start-time indicats date and time.";
+          "start-time indicates date and time.";
       }
       leaf duration {
         type string;
@@ -1507,10 +1508,10 @@ will be classified in app-id 2.
       leaf-list prefix {
         type inet:ip-prefix;
         description
-          "ip prefix reserved for SP managment purpose.";
+          "ip prefix reserved for SP management purpose.";
       }
       description
-        "ip prefix list reserved for SP managment purpose.";
+        "ip prefix list reserved for SP management purpose.";
     }
     list application {
       key "app-id";
@@ -1620,7 +1621,7 @@ will be classified in app-id 2.
             "overlay connection as Primary or both Primary and
              Backup.";
         }
-        container bandwith {
+        container bandwidth {
           leaf commit {
             type uint32;
             description
@@ -2100,7 +2101,7 @@ will be classified in app-id 2.
       </figure>
 
       <t>IANA has recorded a YANG module name in the "YANG Module Names"
-      registry [RFC6020] as follows:</t>
+      registry <xref target="RFC6020"/> as follows:</t>
 
       <figure>
         <artwork>           Name: ietf-sdwan-svc
@@ -2111,7 +2112,7 @@ will be classified in app-id 2.
     </section>
 
     <section title="Appendix 1: Terminology Mapping between MEF SD-WAN Service Attributes and IETF SD-WAN model ">
-      <t> SD-WAN Service Attributes and Services <xref
+      <t>SD-WAN Service Attributes and Services <xref
       target="MEF70-Draft-R1"/>, defines the SD-WAN service attributes and
       services for SD-WAN service delivery. These service attributes can be
       used for communication between subscribers and services to deliver
@@ -2232,10 +2233,6 @@ will be classified in app-id 2.
 
     <references title="Informative References">
       <?rfc include='reference.I-D.wood-rtgwg-sdwan-ose-yang'?>
-
-      <?rfc include='reference.RFC.4110'?>
-
-      <?rfc include='reference.RFC.7364'?>
 
       <?rfc include='reference.RFC.7426'?>
 
