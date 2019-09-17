@@ -19,7 +19,7 @@ module ietf-sdwan-svc {
     "The YANG module defines a generic service configuration
      model for Managed SD-WAN.";
 
-  revision 2019-06-06 {
+  revision 2019-09-17 {
     description
       "Initial revision";
     reference "A YANG Data Model for SD-WAN service.";
@@ -480,8 +480,7 @@ module ietf-sdwan-svc {
         key "app-group-id";
         leaf app-group-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service"+
-            "/application-group/app-group-id";
+            path "/sdwan-svc/vpn-services/vpn-service/application-group/app-group-id";
           }
           description
             "Identity for application";
@@ -500,8 +499,7 @@ module ietf-sdwan-svc {
         key "app-id";
         leaf app-id {
           type leafref {
-            path "/sdwan-svc/vpn-services/vpn-service"+
-            "/application/app-id";
+            path "/sdwan-svc/vpn-services/vpn-service/application/app-id";
           }
           description
             "Identity for application";
@@ -523,7 +521,7 @@ module ietf-sdwan-svc {
       "grouping for vpn endpoint";
   }
 
-  grouping flow-definition {
+  grouping flow-classifier {
     container match-flow {
       leaf ethertype {
         type uint16;
@@ -584,8 +582,8 @@ module ietf-sdwan-svc {
       "Grouping for flow definition.";
   }
 
-  grouping application-criteria {
-    list ac {
+  grouping application-classifier {
+    list rule {
       key "name";
       ordered-by user;
       leaf name {
@@ -597,7 +595,7 @@ module ietf-sdwan-svc {
       choice match-type {
         default "match-flow";
         case match-flow {
-          uses flow-definition;
+          uses flow-classifier;
         }
         case match-application {
           leaf match-application {
@@ -612,10 +610,115 @@ module ietf-sdwan-svc {
           "Choice for classification.";
       }
       description
-        "List of marking rules.";
+        "List of matching rules.";
     }
     description
-      "This grouping defines QoS parameters for a site.";
+      "This grouping defines application classifier.";
+  }
+
+  grouping path-selection-policy {
+    description
+      "This grouping defines path selection policies.";
+    container path-selection-policy {
+      description
+        "A container for path selection policies.";
+      leaf encryption {
+        type enumeration {
+          enum yes {
+            description
+              "Indicates whether or not the application flow requires
+               to send over encrypted overlay tunnel.";
+          }
+          enum either {
+            description
+              " Either means this policy is not applied";
+          }
+        }
+        description
+          "Indicates whether or not the application flow requires
+           encryption.";
+      }
+      leaf public-private {
+        type enumeration {
+          enum private-only {
+            description
+              "The private WAN underlay is specified.";
+          }
+          enum either {
+            description
+              "Both public WAN or private WAN could be used";
+          }
+        }
+        description
+          "Indicates whether the Application Flow can traverse
+           Public or Private Underlay Connectivity Services
+           (or both).Either means this policy is not applied.";
+      }
+      leaf billing-method {
+        type enumeration {
+          enum flat-only {
+            description
+              "Only flat-rate underlay could be used for the
+               traffic.";
+          }
+          enum either {
+            description
+              "Either flat-rate or usage based underlay could
+               be used for the traffic.";
+          }
+        }
+        description
+          "billing policy.";
+      }
+      leaf backup-path {
+        type enumeration {
+          enum yes {
+            description
+              "Only the primary tunnel overlay could be used for
+               the traffic.";
+          }
+          enum no {
+            description
+              "Either the primary or backup overlay tunnel could be
+               used for the traffic.";
+          }
+        }
+        description
+          "overlay connection as Primary or both Primary and
+           Backup.";
+      }
+    }
+  }
+
+  grouping policy-set {
+    container policy-set {
+      uses path-selection-policy;
+      leaf local-breakout {
+        type boolean;
+        description
+          "indicates whether the Application Flow should be
+           routed directly to the Internet using Local Internet
+           Breakout.It can have values Yes and No.";
+      }
+      container bandwidth {
+        leaf commit {
+          type uint32;
+          description
+            "CIR";
+        }
+        leaf max {
+          type uint32;
+          description
+            "max speed ";
+        }
+        description
+          "Container for the bandwidth policy";
+      }
+      description
+        "Container for a policy set";
+    }
+    description
+      "This grouping defines a set of policy.";
   }
 
   grouping vpn-service {
@@ -675,7 +778,7 @@ module ietf-sdwan-svc {
         description
           "application name";
       }
-      uses application-criteria;
+      uses application-classifier;
       description
         "list for application";
     }
@@ -703,96 +806,7 @@ module ietf-sdwan-svc {
         description
           "Policy names";
       }
-      container policy-package {
-        leaf encryption {
-          type enumeration {
-            enum yes {
-              description
-                "Indicates whether or not the application flow requires
-                 to send over encrypted overlay tunnel.";
-            }
-            enum either {
-              description
-                " Either means this policy is not applied";
-            }
-          }
-          description
-            "Indicates whether or not the application flow requires
-             encryption.";
-        }
-        leaf public-private {
-          type enumeration {
-            enum private-only {
-              description
-                "The private WAN underlay is specified.";
-            }
-            enum either {
-              description
-                "Both public WAN or private WAN could be used";
-            }
-          }
-          description
-            "Indicates whether the Application Flow can traverse
-             Public or Private Underlay Connectivity Services
-             (or both).Either means this policy is not applied.";
-        }
-        leaf local-breakout {
-          type boolean;
-          description
-            "indicates whether the Application Flow should be
-             routed directly to the Internet using Local Internet
-             Breakout.It can have values Yes and No.";
-        }
-        leaf billing-method {
-          type enumeration {
-            enum flat-only {
-              description
-                "Only flat-rate underlay could be used for the
-                 traffic.";
-            }
-            enum either {
-              description
-                "Either flat-rate or usage based underlay could
-                 be used for the traffic.";
-            }
-          }
-          description
-            "billing policy.";
-        }
-        leaf backup-path {
-          type enumeration {
-            enum yes {
-              description
-                "Only the primary tunnel overlay could be used for
-                 the traffic.";
-            }
-            enum no {
-              description
-                "Either the primary or backup overlay tunnel could be
-                 used for the traffic.";
-            }
-          }
-          description
-            "overlay connection as Primary or both Primary and
-             Backup.";
-        }
-        container bandwidth {
-          leaf commit {
-            type uint32;
-            description
-              "CIR";
-          }
-          leaf max {
-            type uint32;
-            description
-              "max speed ";
-          }
-          description
-            "Container for the bandwidth policy";
-        }
-        description
-          "Container for policy package";
-      }
+      uses policy-set;
       description
         "List for policy";
     }
